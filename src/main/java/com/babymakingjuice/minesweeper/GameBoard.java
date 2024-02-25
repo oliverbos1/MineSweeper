@@ -59,6 +59,31 @@ public class GameBoard {
         fields[x][y] = field;
     }
 
+    public boolean winningState() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (!((getField(x, y).isOpen && !getField(x, y).hasMine) ||
+                        (getField(x, y).hasMine && getField(x, y).hasFlag))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public Optional<Coordinates> losingState() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (getField(x, y).hasMine && getField(x, y).isOpen) {
+                    return Optional.of(new Coordinates(x, y));
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public int checkAdjacentMines(int xPar, int yPar) {
         return adjacentTileCoordinates(xPar, yPar)
                 .stream()
@@ -84,18 +109,22 @@ public class GameBoard {
         return coordinates;
     }
 
-    public record Coordinates(int x, int y) {}
+    public record Coordinates(int x, int y) {
+    }
 
     public record FieldState(boolean isOpen, boolean hasMine, boolean hasFlag, int adjacentMineCount) {
         public FieldState withIsOpen(boolean isOpen) {
             return new FieldState(isOpen, hasMine, hasFlag, adjacentMineCount);
         }
+
         public FieldState withHasMine(boolean hasMine) {
             return new FieldState(isOpen, hasMine, hasFlag, adjacentMineCount);
         }
+
         public FieldState withHasFlag(boolean hasFlag) {
             return new FieldState(isOpen, hasMine, hasFlag, adjacentMineCount);
         }
+
         public FieldState withAdjacentMineCount(int adjacentMineCount) {
             return new FieldState(isOpen, hasMine, hasFlag, adjacentMineCount);
         }
