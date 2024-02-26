@@ -24,7 +24,7 @@ public class MineSweeperApp extends GameApplication {
     @Override
     protected void initGame() {
         gameLogic = new GameLogic(new Random(), getEventBus());
-        gameLogic.initialize(10, 10, 4);
+        gameLogic.initialize(10, 10, 20);
     }
 
     @Override

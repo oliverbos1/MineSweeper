@@ -20,6 +20,8 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 public class GameDisplay implements EntityFactory {
     private Entity[][] boardBackground = new Entity[10][10];
     private Entity[][] boardContent = new Entity[10][10];
+    private Entity flagCountDigit1 = new Entity();
+    private Entity flagCountDigit2 = new Entity();
 
     public void initialize() {
         FXGL.getGameWorld().addEntityFactory(this);
@@ -30,6 +32,8 @@ public class GameDisplay implements EntityFactory {
                 boardBackground[x][y] = FXGL.spawn("tileBackground", x * FXGL.getAppWidth() / 10, y * ((FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y] = FXGL.spawn("tile", x * FXGL.getAppWidth() / 10, y * ((FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
+                //flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 100, 10);
+                //flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 200, 10);
             }
         }
 
@@ -66,13 +70,22 @@ public class GameDisplay implements EntityFactory {
         return tile;
     }
 
-    @Spawns("flagsLeftCount")
-    public Entity newFlagsLeftCount(SpawnData data) {
-        var flagCount = entityBuilder(data)
-                .view("tileUnpressed")
+    @Spawns("remainingFlagCountDigit1")
+    public Entity newRemainingFlagsCountDigit1(SpawnData data) {
+        var flagCountDigit1 = entityBuilder(data)
+                .view("tileUnpressed.png")
                 .build();
 
-        return flagCount;
+        return flagCountDigit1;
+    }
+
+    @Spawns("remainingFlagCountDigit2")
+    public Entity newRemainingFlagsCountDigit2(SpawnData data) {
+        var flagCountDigit2 = entityBuilder(data)
+                .view("tileUnpressed.png")
+                .build();
+
+        return flagCountDigit2;
     }
 
     private void onTileClick(Entity tile, MouseButton button) {
@@ -94,6 +107,7 @@ public class GameDisplay implements EntityFactory {
                 updateTile(x, y, gameBoard.getField(x, y));
             }
         }
+        updateRemainingFlagCount(gameBoard);
     }
 
     private void updateTile(int x, int y, FieldState field) {
@@ -110,6 +124,27 @@ public class GameDisplay implements EntityFactory {
         else image = STR."mineNumbers/mineCount\{field.adjacentMineCount()}.png";
 
         return image;
+    }
+
+    private void updateRemainingFlagCount (GameBoard gameBoard) {
+        int digit1;
+        int digit2;
+
+        int remainingFlagCount = gameBoard.getMineAmount() - gameBoard.getFlagAmount();
+        if (remainingFlagCount < 0) remainingFlagCount = 0;
+        if (remainingFlagCount > 99) remainingFlagCount = 99;
+
+        if (remainingFlagCount < 10) digit1 = 0;
+        else digit1 = remainingFlagCount / 10;
+        digit2 = remainingFlagCount % 10;
+        String remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}";
+        String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}";
+
+        setImage(flagCountDigit1, remainingFlagCountImageDigit1);
+        setImage(flagCountDigit2, remainingFlagCountImageDigit2);
+
+        System.out.println(STR."getMineAmount: \{gameBoard.getMineAmount()} getFlgAmount: \{gameBoard.getFlagAmount()}");
+        System.out.println(STR."Digit 1: \{digit1} Digit 2: \{digit2}");
     }
 
     private static void setImage(Entity entity, String image) {

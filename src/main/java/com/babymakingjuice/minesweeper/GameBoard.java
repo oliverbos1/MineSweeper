@@ -47,7 +47,7 @@ public class GameBoard {
         int flagCount = 0;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if (getField(x, y).hasMine) {
+                if (getField(x, y).hasFlag) {
                     flagCount++;
                 }
             }
