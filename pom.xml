@@ -68,7 +68,6 @@
                     <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -84,6 +83,7 @@
                     <mainClass>com.babymakingjuice.minesweeper.MineSweeperApp</mainClass>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

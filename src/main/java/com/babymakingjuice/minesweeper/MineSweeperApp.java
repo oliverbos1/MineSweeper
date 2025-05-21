@@ -1,5 +1,6 @@
 package com.babymakingjuice.minesweeper;
 
+import com.almasb.fxgl.app.CursorInfo;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 
@@ -14,11 +15,17 @@ public class MineSweeperApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
+        gameSettings.setFileSystemWriteAllowed(false);
+        CursorInfo CursorInfo = new CursorInfo("aero_arrow.png", 7.0, 6.0);
+        gameSettings.setDefaultCursor(CursorInfo);
         gameSettings.setWidth(1000);
         gameSettings.setHeight(1100);
         gameSettings.setTitle("Mine Sweeper");
         gameSettings.setVersion("v1.0");
         gameSettings.setGameMenuEnabled(false);
+        gameSettings.setManualResizeEnabled(false);
+        gameSettings.setPreserveResizeRatio(true);
+        gameSettings.setAppIcon("tileMine.png");
     }
 
     @Override

@@ -60,7 +60,7 @@ class GameBoardTest {
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, true, 0));
         gameBoard.setField(1, 1, new GameBoard.FieldState(true, false, false, 0));
 
-        var result = gameBoard.winningState();
+        var result = gameBoard.checkWinningState();
 
         assertEquals(true, result);
     }
@@ -74,7 +74,7 @@ class GameBoardTest {
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, false, 0));
         gameBoard.setField(1, 1, new GameBoard.FieldState(true, false, false, 0));
 
-        var result = gameBoard.winningState();
+        var result = gameBoard.checkWinningState();
 
         assertEquals(false, result);
     }
@@ -88,7 +88,7 @@ class GameBoardTest {
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, true, 0));
         gameBoard.setField(1, 1, new GameBoard.FieldState(true, false, false, 0));
 
-        var result = gameBoard.losingState();
+        var result = gameBoard.checkLosingState();
         Optional<GameBoard.Coordinates> expectedCoordinate = Optional.of(new GameBoard.Coordinates(0, 0));
 
         assertEquals(expectedCoordinate, result);
@@ -103,7 +103,7 @@ class GameBoardTest {
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, false, true, 0));
         gameBoard.setField(1, 1, new GameBoard.FieldState(true, false, false, 0));
 
-        var result = gameBoard.losingState();
+        var result = gameBoard.checkLosingState();
 
         assertEquals(Optional.empty(), result);
     }

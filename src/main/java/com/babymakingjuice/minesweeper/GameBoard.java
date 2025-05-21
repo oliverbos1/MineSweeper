@@ -12,11 +12,7 @@ public class GameBoard {
         this.width = width;
         this.height = height;
         this.fields = new FieldState[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                fields[x][y] = new FieldState(false, false, false, 0);
-            }
-        }
+        setDefaultBoard();
     }
 
     public int getWidth() {
@@ -59,7 +55,15 @@ public class GameBoard {
         fields[x][y] = field;
     }
 
-    public boolean winningState() {
+    public void setDefaultBoard() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                fields[x][y] = new FieldState(false, false, false, 0);
+            }
+        }
+    }
+
+    public boolean checkWinningState() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (!((getField(x, y).isOpen && !getField(x, y).hasMine) ||
@@ -72,7 +76,7 @@ public class GameBoard {
         return true;
     }
 
-    public Optional<Coordinates> losingState() {
+    public Optional<Coordinates> checkLosingState() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (getField(x, y).hasMine && getField(x, y).isOpen) {

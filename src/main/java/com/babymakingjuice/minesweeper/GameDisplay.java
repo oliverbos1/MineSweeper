@@ -15,6 +15,8 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.Optional;
 
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
 public class GameDisplay implements EntityFactory {
@@ -22,6 +24,7 @@ public class GameDisplay implements EntityFactory {
     private Entity[][] boardContent = new Entity[10][10];
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
+    private Entity flagCountBackground = new Entity();
 
     public void initialize() {
         FXGL.getGameWorld().addEntityFactory(this);
@@ -29,26 +32,27 @@ public class GameDisplay implements EntityFactory {
         FXGL.spawn("bannerBackground", 0, 0);
         for (int y = 0; y < 10; y++) {
             for (int x = 0; x < 10; x++) {
-                boardBackground[x][y] = FXGL.spawn("tileBackground", x * FXGL.getAppWidth() / 10, y * ((FXGL.getAppHeight() - 100) / 10) + 100);
-                boardContent[x][y] = FXGL.spawn("tile", x * FXGL.getAppWidth() / 10, y * ((FXGL.getAppHeight() - 100) / 10) + 100);
+                boardBackground[x][y] = FXGL.spawn("tileBackground", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
+                boardContent[x][y] = FXGL.spawn("tile", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
-                //flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 100, 10);
-                //flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 200, 10);
+                flagCountBackground = FXGL.spawn("remainingFlagCountBackground", 105, 10);
+                flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 109, 14);
+                flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 143, 14);
             }
         }
 
-        getEventBus().addEventHandler(GameEvents.BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
+        getEventBus().addEventHandler(GameEvents
+                .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
     }
 
     @Spawns("bannerBackground")
     public Entity newBannerBackground(SpawnData data) {
         var banner = entityBuilder(data)
-                .view("bannerBackground.png")
+                .view("bannerBackgroundNoTitle.png")
                 .build();
 
         return banner;
     }
-
     @Spawns("tileBackground")
     public Entity newTileBackground(SpawnData data) {
         var tile = entityBuilder(data)
@@ -57,7 +61,6 @@ public class GameDisplay implements EntityFactory {
 
         return tile;
     }
-
     @Spawns("tile")
     public Entity newTile(SpawnData data) {
         HitBox box = new HitBox(BoundingShape.box(getAppWidth() / 10, ((getAppHeight() - 100) / 10) + 100));
@@ -69,24 +72,31 @@ public class GameDisplay implements EntityFactory {
 
         return tile;
     }
-
     @Spawns("remainingFlagCountDigit1")
     public Entity newRemainingFlagsCountDigit1(SpawnData data) {
         var flagCountDigit1 = entityBuilder(data)
-                .view("tileUnpressed.png")
+                .view("remainingFlagCountNumber/count0.png")
                 .build();
 
         return flagCountDigit1;
     }
-
     @Spawns("remainingFlagCountDigit2")
     public Entity newRemainingFlagsCountDigit2(SpawnData data) {
         var flagCountDigit2 = entityBuilder(data)
-                .view("tileUnpressed.png")
+                .view("remainingFlagCountNumber/count0.png")
                 .build();
 
         return flagCountDigit2;
     }
+    @Spawns("remainingFlagCountBackground")
+    public Entity newRemainingFlagsCountBackground(SpawnData data) {
+        var flagCountDigit2 = entityBuilder(data)
+                .view("remainingFlagCountNumber/background.png")
+                .build();
+
+        return flagCountDigit2;
+    }
+
 
     private void onTileClick(Entity tile, MouseButton button) {
         TileStateComponent tileState = tile.getComponent(TileStateComponent.class);
@@ -107,7 +117,28 @@ public class GameDisplay implements EntityFactory {
                 updateTile(x, y, gameBoard.getField(x, y));
             }
         }
+
         updateRemainingFlagCount(gameBoard);
+
+        // Unresolved Bug line (114 - 130)
+
+        if (gameBoard.checkLosingState().isPresent()) {
+            getDialogService().showConfirmationBox("You Lose!" + "\nPlay again?", yes -> {
+                if (yes) {
+                    gameBoard.setDefaultBoard();
+                    getGameController().startNewGame();
+                } else getGameController().exit();
+            });
+        }
+
+        if (gameBoard.checkWinningState()) {
+            getDialogService().showConfirmationBox("You win!" + "\nPlay again?", yes -> {
+                if (yes) {
+                    gameBoard.setDefaultBoard();
+                    getGameController().startNewGame();
+                } else getGameController().exit();
+            });
+        }
     }
 
     private void updateTile(int x, int y, FieldState field) {
@@ -137,8 +168,8 @@ public class GameDisplay implements EntityFactory {
         if (remainingFlagCount < 10) digit1 = 0;
         else digit1 = remainingFlagCount / 10;
         digit2 = remainingFlagCount % 10;
-        String remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}";
-        String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}";
+        String remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
+        String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}.png";
 
         setImage(flagCountDigit1, remainingFlagCountImageDigit1);
         setImage(flagCountDigit2, remainingFlagCountImageDigit2);
