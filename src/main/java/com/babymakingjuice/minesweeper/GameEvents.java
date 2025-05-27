@@ -35,4 +35,15 @@ public class GameEvents {
             this.updatedGameBoard = updatedGameBoard;
         }
     }
+
+    public static class RestartGameEvent extends Event {
+
+        public static final EventType<RestartGameEvent> RESTART_GAME_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "RestartGameEvent");
+
+        public RestartGameEvent(){
+            super(RESTART_GAME_EVENT_EVENT_TYPE);
+        }
+
+    }
+
 }

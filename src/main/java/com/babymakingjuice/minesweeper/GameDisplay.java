@@ -120,13 +120,10 @@ public class GameDisplay implements EntityFactory {
 
         updateRemainingFlagCount(gameBoard);
 
-        // Unresolved Bug line (114 - 130)
-
         if (gameBoard.checkLosingState().isPresent()) {
             getDialogService().showConfirmationBox("You Lose!" + "\nPlay again?", yes -> {
                 if (yes) {
-                    gameBoard.setDefaultBoard();
-                    getGameController().startNewGame();
+                    publishNewGame();
                 } else getGameController().exit();
             });
         }
@@ -134,8 +131,7 @@ public class GameDisplay implements EntityFactory {
         if (gameBoard.checkWinningState()) {
             getDialogService().showConfirmationBox("You win!" + "\nPlay again?", yes -> {
                 if (yes) {
-                    gameBoard.setDefaultBoard();
-                    getGameController().startNewGame();
+                    publishNewGame();
                 } else getGameController().exit();
             });
         }
@@ -181,6 +177,10 @@ public class GameDisplay implements EntityFactory {
     private static void setImage(Entity entity, String image) {
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(FXGL.texture(image));
+    }
+
+    private void publishNewGame(){
+        getEventBus().fireEvent(new GameEvents.RestartGameEvent());
     }
 
     private static class TileStateComponent extends Component {

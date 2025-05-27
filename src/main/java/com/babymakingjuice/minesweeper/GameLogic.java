@@ -9,6 +9,9 @@ public class GameLogic {
     GameBoard gameBoard;
     Random rand;
     EventBus eventBus;
+    private int width;
+    private int height;
+    private int mineAmount;
 
     public GameLogic(Random rand, EventBus eventBus) {
         this.rand = rand;
@@ -16,8 +19,19 @@ public class GameLogic {
     }
 
     public void initialize(int width, int height, int mineAmount) {
-        gameBoard = new GameBoard(width, height);
+        this.width = width;
+        this.height = height;
+        this.mineAmount = mineAmount;
 
+        initializeBoard(width, height, mineAmount);
+
+        eventBus.addEventHandler(GameEvents.MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
+        eventBus.addEventHandler(GameEvents
+                .RestartGameEvent.RESTART_GAME_EVENT_EVENT_TYPE, this::onRestartGameEvent);
+    }
+
+    private void initializeBoard(int width, int height, int mineAmount) {
+        gameBoard = new GameBoard(width, height);
         for (int r = 0; r < mineAmount; r++) {
             int rx;
             int ry;
@@ -30,8 +44,11 @@ public class GameLogic {
             GameBoard.FieldState existingField = gameBoard.getField(rx, ry);
             gameBoard.setField(rx, ry, existingField.withHasMine(true));
         }
+    }
 
-        eventBus.addEventHandler(GameEvents.MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
+    private void onRestartGameEvent(GameEvents.RestartGameEvent restartGameEvent) {
+        initializeBoard(width, height, mineAmount);
+        publishBoard(gameBoard);
     }
 
     private void onMoveEvent(GameEvents.MoveEvent e) {
@@ -79,4 +96,7 @@ public class GameLogic {
     private static void publishBoard(GameBoard gameBoard) {
         getEventBus().fireEvent(new GameEvents.BoardUpdatedEvent(gameBoard));
     }
+
+
+
 }
