@@ -59,10 +59,25 @@ public class GameLogic {
         }
     }
 
+    public void openBoard() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                GameBoard.FieldState existingField = gameBoard.getField(x, y);
+                gameBoard.setField(x, y, existingField
+                        .withIsOpen(true)
+                        .withAdjacentMineCount(gameBoard.checkAdjacentMines(x, y))
+                );
+            }
+        }
+    }
+
     private void tileOpened(int x, int y) {
         if (!gameBoard.getField(x, y).hasFlag()) {
             tileOpened2(x, y);
 
+            if (gameBoard.checkLosingState().isPresent()) {
+                openBoard();
+            }
             publishBoard(gameBoard);
         }
     }
