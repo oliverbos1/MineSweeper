@@ -20,11 +20,10 @@ import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
 public class GameDisplay implements EntityFactory {
-    private Entity[][] boardBackground = new Entity[10][10];
-    private Entity[][] boardContent = new Entity[10][10];
+    private final Entity[][] boardBackground = new Entity[10][10];
+    private final Entity[][] boardContent = new Entity[10][10];
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
-    private Entity flagCountBackground = new Entity();
 
     public void initialize() {
         FXGL.getGameWorld().addEntityFactory(this);
@@ -35,7 +34,7 @@ public class GameDisplay implements EntityFactory {
                 boardBackground[x][y] = FXGL.spawn("tileBackground", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y] = FXGL.spawn("tile", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
-                flagCountBackground = FXGL.spawn("remainingFlagCountBackground", 105, 10);
+                Entity flagCountBackground = FXGL.spawn("remainingFlagCountBackground", 105, 10);
                 flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 109, 14);
                 flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 143, 14);
             }
@@ -47,23 +46,21 @@ public class GameDisplay implements EntityFactory {
 
     @Spawns("bannerBackground")
     public Entity newBannerBackground(SpawnData data) {
-        var banner = entityBuilder(data)
+
+        return entityBuilder(data)
                 .view("bannerBackgroundNoTitle.png")
                 .build();
-
-        return banner;
     }
     @Spawns("tileBackground")
     public Entity newTileBackground(SpawnData data) {
-        var tile = entityBuilder(data)
+
+        return entityBuilder(data)
                 .view("tileBackground.png")
                 .build();
-
-        return tile;
     }
     @Spawns("tile")
     public Entity newTile(SpawnData data) {
-        HitBox box = new HitBox(BoundingShape.box(getAppWidth() / 10, ((getAppHeight() - 100) / 10) + 100));
+        HitBox box = new HitBox(BoundingShape.box(getAppWidth() / 10.0, ((getAppHeight() - 100.0) / 10) + 100));
         var tile = entityBuilder(data)
                 .bbox(box)
                 .view("tileUnpressed.png")
@@ -74,27 +71,24 @@ public class GameDisplay implements EntityFactory {
     }
     @Spawns("remainingFlagCountDigit1")
     public Entity newRemainingFlagsCountDigit1(SpawnData data) {
-        var flagCountDigit1 = entityBuilder(data)
+
+        return entityBuilder(data)
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
-
-        return flagCountDigit1;
     }
     @Spawns("remainingFlagCountDigit2")
     public Entity newRemainingFlagsCountDigit2(SpawnData data) {
-        var flagCountDigit2 = entityBuilder(data)
+
+        return entityBuilder(data)
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
-
-        return flagCountDigit2;
     }
     @Spawns("remainingFlagCountBackground")
     public Entity newRemainingFlagsCountBackground(SpawnData data) {
-        var flagCountDigit2 = entityBuilder(data)
+
+        return entityBuilder(data)
                 .view("remainingFlagCountNumber/background.png")
                 .build();
-
-        return flagCountDigit2;
     }
 
 

@@ -10,8 +10,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getEventBus;
 
 public class MineSweeperApp extends GameApplication {
 
-    private GameLogic gameLogic;
-    private GameDisplay gameDisplay = new GameDisplay();
+    private final GameDisplay gameDisplay = new GameDisplay();
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -30,7 +29,7 @@ public class MineSweeperApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        gameLogic = new GameLogic(new Random(), getEventBus());
+        GameLogic gameLogic = new GameLogic(new Random(), getEventBus());
         gameLogic.initialize(10, 10, 20);
     }
 
