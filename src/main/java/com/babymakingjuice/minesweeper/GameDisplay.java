@@ -29,14 +29,15 @@ public class GameDisplay implements EntityFactory {
         FXGL.getGameWorld().addEntityFactory(this);
 
         FXGL.spawn("bannerBackground", 0, 0);
+        FXGL.spawn("remainingFlagCountBackground", 105, 10);
+        flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 109, 14);
+        flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 143, 14);
+
         for (int y = 0; y < 10; y++) {
             for (int x = 0; x < 10; x++) {
                 boardBackground[x][y] = FXGL.spawn("tileBackground", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y] = FXGL.spawn("tile", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
-                Entity flagCountBackground = FXGL.spawn("remainingFlagCountBackground", 105, 10);
-                flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 109, 14);
-                flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 143, 14);
             }
         }
 

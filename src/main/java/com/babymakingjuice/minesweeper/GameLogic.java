@@ -25,7 +25,8 @@ public class GameLogic {
 
         initializeBoard(width, height, mineAmount);
 
-        eventBus.addEventHandler(GameEvents.MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
+        eventBus.addEventHandler(GameEvents
+                .MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
         eventBus.addEventHandler(GameEvents
                 .RestartGameEvent.RESTART_GAME_EVENT_EVENT_TYPE, this::onRestartGameEvent);
     }
@@ -73,7 +74,7 @@ public class GameLogic {
 
     private void tileOpened(int x, int y) {
         if (!gameBoard.getField(x, y).hasFlag()) {
-            tileOpened2(x, y);
+            tileOpenRecursion(x, y);
 
             if (gameBoard.checkLosingState().isPresent()) {
                 openBoard();
@@ -82,7 +83,7 @@ public class GameLogic {
         }
     }
 
-    private void tileOpened2(int x, int y) {
+    private void tileOpenRecursion(int x, int y) {
         GameBoard.FieldState existingField = gameBoard.getField(x, y);
 
         if (!gameBoard.getField(x, y).isOpen()) {
@@ -92,7 +93,7 @@ public class GameLogic {
             );
             if (gameBoard.checkAdjacentMines(x, y) == 0) {
                 for (GameBoard.Coordinates coordinate : gameBoard.adjacentTileCoordinates(x, y)) {
-                    tileOpened2(coordinate.x(), coordinate.y());
+                    tileOpenRecursion(coordinate.x(), coordinate.y());
                 }
             }
         }
