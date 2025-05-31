@@ -20,9 +20,9 @@ class GameLogicTest {
         var gameLogic = new GameLogic(randomMock, eventBusMock);
         gameLogic.initialize(new MineSweeperSettings(3, 3, 3));
 
-        assertEquals(true, gameLogic.gameBoard.getField(0, 0).hasMine());
-        assertEquals(true, gameLogic.gameBoard.getField(1, 1).hasMine());
-        assertEquals(true, gameLogic.gameBoard.getField(2, 2).hasMine());
-        assertEquals(false, gameLogic.gameBoard.getField(0, 1).hasMine());
+        assertTrue(gameLogic.gameBoard.getField(0, 0).hasMine());
+        assertTrue(gameLogic.gameBoard.getField(1, 1).hasMine());
+        assertTrue(gameLogic.gameBoard.getField(2, 2).hasMine());
+        assertFalse(gameLogic.gameBoard.getField(0, 1).hasMine());
     }
 }
