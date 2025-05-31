@@ -18,10 +18,10 @@ public class GameLogic {
         this.eventBus = eventBus;
     }
 
-    public void initialize(int width, int height, int mineAmount) {
-        this.width = width;
-        this.height = height;
-        this.mineAmount = mineAmount;
+    public void initialize(MineSweeperSettings settings) {
+        this.width = settings.nrTilesHorizontal();
+        this.height = settings.nrTilesVertical();
+        this.mineAmount = settings.mineAmount();
 
         initializeBoard(width, height, mineAmount);
 

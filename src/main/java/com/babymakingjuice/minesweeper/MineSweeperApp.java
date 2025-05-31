@@ -12,11 +12,13 @@ public class MineSweeperApp extends GameApplication {
 
     private final GameDisplay gameDisplay = new GameDisplay();
 
+
+    MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(10, 10, 20);
+
     @Override
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setFileSystemWriteAllowed(false);
-        CursorInfo CursorInfo = new CursorInfo("aero_arrow.png", 7.0, 6.0);
-        gameSettings.setDefaultCursor(CursorInfo);
+        gameSettings.setDefaultCursor(new CursorInfo("aero_arrow.png", 7.0, 6.0));
         gameSettings.setWidth(1000);
         gameSettings.setHeight(1100);
         gameSettings.setTitle("Mine Sweeper");
@@ -30,12 +32,12 @@ public class MineSweeperApp extends GameApplication {
     @Override
     protected void initGame() {
         GameLogic gameLogic = new GameLogic(new Random(), getEventBus());
-        gameLogic.initialize(10, 10, 20);
+        gameLogic.initialize(mineSweeperSettings);
     }
 
     @Override
     protected void initUI() {
-        gameDisplay.initialize();
+        gameDisplay.initialize(mineSweeperSettings);
     }
 
     public static void main(String[] args) {

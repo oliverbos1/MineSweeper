@@ -10,6 +10,7 @@ import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.babymakingjuice.minesweeper.GameBoard.FieldState;
 import com.babymakingjuice.minesweeper.GameEvents.MoveEvent.MoveType;
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -19,30 +20,50 @@ import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
+@SuppressWarnings("preview")
 public class GameDisplay implements EntityFactory {
-    private final Entity[][] boardBackground = new Entity[10][10];
-    private final Entity[][] boardContent = new Entity[10][10];
+    private Entity[][] boardContent;
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
 
-    public void initialize() {
-        FXGL.getGameWorld().addEntityFactory(this);
+    int tileWidthInPixels = 100;
+    int tileHeightInPixels = 100;
 
-        FXGL.spawn("bannerBackground", 0, 0);
-        FXGL.spawn("remainingFlagCountBackground", 105, 10);
-        flagCountDigit1 = FXGL.spawn("remainingFlagCountDigit1", 109, 14);
-        flagCountDigit2 = FXGL.spawn("remainingFlagCountDigit2", 143, 14);
+    public void initialize(MineSweeperSettings settings) {
+        getGameWorld().addEntityFactory(this);
 
-        for (int y = 0; y < 10; y++) {
-            for (int x = 0; x < 10; x++) {
-                boardBackground[x][y] = FXGL.spawn("tileBackground", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
-                boardContent[x][y] = FXGL.spawn("tile", (double) (x * FXGL.getAppWidth()) / 10, y * ((double) (FXGL.getAppHeight() - 100) / 10) + 100);
+        boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesVertical()];
+
+        spawn("bannerBackground", 0, 0);
+        spawn("remainingFlagCountBackground", 105, 10);
+        flagCountDigit1 = spawn("remainingFlagCountDigit1", 109, 14);
+        flagCountDigit2 = spawn("remainingFlagCountDigit2", 143, 14);
+
+        int boardHeightInPixels = getAppHeight() - 100;
+
+        double scaleX = getAppWidth() / (double) (settings.nrTilesHorizontal() * tileWidthInPixels);
+        double scaleY = boardHeightInPixels / (double) (settings.nrTilesVertical() * tileHeightInPixels);
+
+        for (int x = 0; x < settings.nrTilesHorizontal(); x++) {
+            for (int y = 0; y < settings.nrTilesVertical(); y++) {
+                double xOffset = (double) (x * getAppWidth()) / settings.nrTilesHorizontal();
+                double yOffset = y * ((double) boardHeightInPixels / settings.nrTilesVertical()) + 100;
+                scaledSpawn("tileBackground", xOffset, yOffset, scaleX, scaleY);
+                boardContent[x][y] = scaledSpawn("tile", xOffset, yOffset, scaleX, scaleY);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
             }
         }
 
         getEventBus().addEventHandler(GameEvents
                 .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
+    }
+
+    private static Entity scaledSpawn(String entityName, double x, double y, double scaleX, double scaleY) {
+        Entity tile = spawn(entityName, x, y);
+        tile.setScaleX(scaleX);
+        tile.setScaleY(scaleY);
+        tile.setScaleOrigin(new Point2D(0, 0));
+        return tile;
     }
 
     @Spawns("bannerBackground")
@@ -61,9 +82,9 @@ public class GameDisplay implements EntityFactory {
     }
     @Spawns("tile")
     public Entity newTile(SpawnData data) {
-        HitBox box = new HitBox(BoundingShape.box(getAppWidth() / 10.0, ((getAppHeight() - 100.0) / 10) + 100));
+        HitBox hitBox = new HitBox(BoundingShape.box(tileWidthInPixels, tileHeightInPixels));
         var tile = entityBuilder(data)
-                .bbox(box)
+                .bbox(hitBox)
                 .view("tileUnpressed.png")
                 .build();
         tile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> onTileClick(tile, e.getButton()));
