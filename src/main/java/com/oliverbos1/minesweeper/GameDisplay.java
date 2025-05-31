@@ -1,4 +1,4 @@
-package com.babymakingjuice.minesweeper;
+package com.oliverbos1.minesweeper;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -8,8 +8,8 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import com.babymakingjuice.minesweeper.GameBoard.FieldState;
-import com.babymakingjuice.minesweeper.GameEvents.MoveEvent.MoveType;
+import com.oliverbos1.minesweeper.GameBoard.FieldState;
+import com.oliverbos1.minesweeper.GameEvents.MoveEvent.MoveType;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

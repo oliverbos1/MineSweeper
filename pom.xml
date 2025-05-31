@@ -80,7 +80,7 @@
                     <launcher>Start-game</launcher>
                     <jlinkImageName>MineSweeper</jlinkImageName>
                     <jlinkZipName>MineSweeper</jlinkZipName>
-                    <mainClass>com.babymakingjuice.minesweeper.MineSweeperApp</mainClass>
+                    <mainClass>com.oliverbos1.minesweeper.MineSweeperApp</mainClass>
                 </configuration>
             </plugin>
 

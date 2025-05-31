@@ -1,4 +1,4 @@
-package com.babymakingjuice.minesweeper;
+package com.oliverbos1.minesweeper;
 
 import com.almasb.fxgl.event.EventBus;
 import org.junit.jupiter.api.Test;

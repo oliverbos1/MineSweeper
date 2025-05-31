@@ -1,4 +1,4 @@
-package com.babymakingjuice.minesweeper;
+package com.oliverbos1.minesweeper;
 
 import org.junit.jupiter.api.Test;
 
