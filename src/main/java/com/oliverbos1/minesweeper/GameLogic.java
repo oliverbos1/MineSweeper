@@ -19,21 +19,22 @@ public class GameLogic {
     }
 
     public void initialize(MineSweeperSettings settings) {
-        this.width = settings.nrTilesHorizontal();
-        this.height = settings.nrTilesVertical();
-        this.mineAmount = settings.mineAmount();
-
-        initializeBoard(width, height, mineAmount);
+        initializeBoard(settings.nrTilesHorizontal(), settings.nrTilesVertical(), settings.mineAmount());
 
         eventBus.addEventHandler(GameEvents
                 .MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
         eventBus.addEventHandler(GameEvents
                 .RestartGameEvent.RESTART_GAME_EVENT_EVENT_TYPE, this::onRestartGameEvent);
+        eventBus.addEventHandler(GameEvents
+                .MineSweeperSettingsChangedEvent.MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE, this::onMineSweeperSettingsChangedEvent);
     }
 
     private void initializeBoard(int width, int height, int mineAmount) {
+        this.width = width;
+        this.height = height;
+        this.mineAmount = Math.min(width * height - 1, mineAmount);
         gameBoard = new GameBoard(width, height);
-        for (int r = 0; r < mineAmount; r++) {
+        for (int r = 0; r < this.mineAmount; r++) {
             int rx;
             int ry;
             do {
@@ -45,6 +46,11 @@ public class GameLogic {
             GameBoard.FieldState existingField = gameBoard.getField(rx, ry);
             gameBoard.setField(rx, ry, existingField.withHasMine(true));
         }
+    }
+
+    private void onMineSweeperSettingsChangedEvent(GameEvents.MineSweeperSettingsChangedEvent mineSweeperSettingsChangedEvent) {
+        MineSweeperSettings mineSweeperSettings = mineSweeperSettingsChangedEvent.mineSweeperSettings;
+        initializeBoard(mineSweeperSettings.nrTilesHorizontal(), mineSweeperSettings.nrTilesVertical(), mineSweeperSettings.mineAmount());
     }
 
     private void onRestartGameEvent(GameEvents.RestartGameEvent restartGameEvent) {

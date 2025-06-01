@@ -32,12 +32,22 @@ public class GameDisplay implements EntityFactory {
     public void initialize(MineSweeperSettings settings) {
         getGameWorld().addEntityFactory(this);
 
-        boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesVertical()];
-
         spawn("bannerBackground", 0, 0);
         spawn("remainingFlagCountBackground", 105, 10);
         flagCountDigit1 = spawn("remainingFlagCountDigit1", 109, 14);
         flagCountDigit2 = spawn("remainingFlagCountDigit2", 143, 14);
+        spawn("settingsTile", 500, 10);
+
+        spawnGridTiles(settings);
+
+        getEventBus().addEventHandler(GameEvents
+                .MineSweeperSettingsChangedEvent.MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE, this::onMineSweeperSettingsChangedEvent);
+        getEventBus().addEventHandler(GameEvents
+                .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
+    }
+
+    private void spawnGridTiles(MineSweeperSettings settings) {
+        boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesVertical()];
 
         int boardHeightInPixels = getAppHeight() - 100;
 
@@ -53,9 +63,11 @@ public class GameDisplay implements EntityFactory {
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
             }
         }
+    }
 
-        getEventBus().addEventHandler(GameEvents
-                .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
+    private void onMineSweeperSettingsChangedEvent(GameEvents.MineSweeperSettingsChangedEvent mineSweeperSettingsChangedEvent) {
+        MineSweeperSettings mineSweeperSettings = mineSweeperSettingsChangedEvent.mineSweeperSettings;
+        spawnGridTiles(mineSweeperSettings);
     }
 
     private static Entity scaledSpawn(String entityName, double x, double y, double scaleX, double scaleY) {
@@ -82,15 +94,27 @@ public class GameDisplay implements EntityFactory {
     }
     @Spawns("tile")
     public Entity newTile(SpawnData data) {
-        HitBox hitBox = new HitBox(BoundingShape.box(tileWidthInPixels, tileHeightInPixels));
+        HitBox tileHitBox = new HitBox(BoundingShape.box(tileWidthInPixels, tileHeightInPixels));
         var tile = entityBuilder(data)
-                .bbox(hitBox)
+                .bbox(tileHitBox)
                 .view("tileUnpressed.png")
                 .build();
         tile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> onTileClick(tile, e.getButton()));
 
         return tile;
     }
+    @Spawns("settingsTile")
+    public Entity newSettingsTile(SpawnData data){
+        HitBox settingsTileHitbox = new HitBox(BoundingShape.box(100, 100));
+        var settingsTile = entityBuilder(data)
+                .bbox(settingsTileHitbox)
+                .view("tileUnpressed.png")
+                .build();
+        settingsTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onSettingsClick());
+
+        return settingsTile;
+    }
+
     @Spawns("remainingFlagCountDigit1")
     public Entity newRemainingFlagsCountDigit1(SpawnData data) {
 
@@ -124,6 +148,17 @@ public class GameDisplay implements EntityFactory {
             default -> Optional.<MoveType>empty();
         };
         moveType.ifPresent(m -> getEventBus().fireEvent(new GameEvents.MoveEvent(tileState.x, tileState.y, m)));
+    }
+
+    private void onSettingsClick() {
+        getDialogService().showInputBox("Amount of tiles (Value between 1-30)", input -> {
+            int nrTiles = Math.max(1, Math.min(30, Integer.parseInt(input)));
+            getEventBus().fireEvent(
+                    new GameEvents.MineSweeperSettingsChangedEvent(
+                            new MineSweeperSettings(nrTiles, nrTiles, (int) (nrTiles * nrTiles * 0.3))
+                    )
+            );
+        });
     }
 
     private void onBoardUpdatedEvent(GameEvents.BoardUpdatedEvent boardUpdatedEvent) {

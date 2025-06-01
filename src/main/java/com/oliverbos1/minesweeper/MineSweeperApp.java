@@ -12,7 +12,6 @@ public class MineSweeperApp extends GameApplication {
 
     private final GameDisplay gameDisplay = new GameDisplay();
 
-
     MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(10, 10, 20);
 
     @Override
