@@ -11,7 +11,6 @@ public class GameLogic {
     EventBus eventBus;
     private int width;
     private int height;
-    private int mineAmount;
 
     public GameLogic(Random rand, EventBus eventBus) {
         this.rand = rand;
@@ -19,22 +18,19 @@ public class GameLogic {
     }
 
     public void initialize(MineSweeperSettings settings) {
-        initializeBoard(settings.nrTilesHorizontal(), settings.nrTilesVertical(), settings.mineAmount());
+        initializeBoard(settings.nrTilesHorizontal(), settings.nrTilesHorizontal(), calcMineAmount(settings));
 
         eventBus.addEventHandler(GameEvents
                 .MoveEvent.MOVE_EVENT_TYPE, this::onMoveEvent);
         eventBus.addEventHandler(GameEvents
-                .RestartGameEvent.RESTART_GAME_EVENT_EVENT_TYPE, this::onRestartGameEvent);
-        eventBus.addEventHandler(GameEvents
-                .MineSweeperSettingsChangedEvent.MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE, this::onMineSweeperSettingsChangedEvent);
+                .NewGameEvent.NEW_GAME_EVENT_EVENT_TYPE, this::onNewGameEvent);
     }
 
     private void initializeBoard(int width, int height, int mineAmount) {
         this.width = width;
         this.height = height;
-        this.mineAmount = Math.min(width * height - 1, mineAmount);
         gameBoard = new GameBoard(width, height);
-        for (int r = 0; r < this.mineAmount; r++) {
+        for (int r = 0; r < mineAmount; r++) {
             int rx;
             int ry;
             do {
@@ -48,13 +44,21 @@ public class GameLogic {
         }
     }
 
-    private void onMineSweeperSettingsChangedEvent(GameEvents.MineSweeperSettingsChangedEvent mineSweeperSettingsChangedEvent) {
-        MineSweeperSettings mineSweeperSettings = mineSweeperSettingsChangedEvent.mineSweeperSettings;
-        initializeBoard(mineSweeperSettings.nrTilesHorizontal(), mineSweeperSettings.nrTilesVertical(), mineSweeperSettings.mineAmount());
+    private int calcMineAmount(MineSweeperSettings settings) {
+        return (int) (settings.nrTilesHorizontal() * settings.nrTilesHorizontal() * switch (settings.difficulty()) {
+            case EASY -> 0.3;
+            case MEDIUM -> 0.4;
+            case HARD -> 0.5;
+        });
     }
 
-    private void onRestartGameEvent(GameEvents.RestartGameEvent restartGameEvent) {
-        initializeBoard(width, height, mineAmount);
+    private void onNewGameEvent(GameEvents.NewGameEvent newGameEvent) {
+        MineSweeperSettings mineSweeperSettings = newGameEvent.mineSweeperSettings;
+        initializeBoard(
+                mineSweeperSettings.nrTilesHorizontal(),
+                mineSweeperSettings.nrTilesHorizontal(),
+                calcMineAmount(mineSweeperSettings)
+        );
         publishBoard(gameBoard);
     }
 
@@ -66,7 +70,7 @@ public class GameLogic {
         }
     }
 
-    public void openBoard() {
+    private void openBoard() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 GameBoard.FieldState existingField = gameBoard.getField(x, y);
@@ -118,7 +122,4 @@ public class GameLogic {
     private static void publishBoard(GameBoard gameBoard) {
         getEventBus().fireEvent(new GameEvents.BoardUpdatedEvent(gameBoard));
     }
-
-
-
 }

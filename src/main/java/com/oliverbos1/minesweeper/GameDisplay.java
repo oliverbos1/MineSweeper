@@ -17,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import java.util.Optional;
 
 import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
 @SuppressWarnings("preview")
@@ -26,54 +25,59 @@ public class GameDisplay implements EntityFactory {
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
 
-    int tileWidthInPixels = 100;
-    int tileHeightInPixels = 100;
+    private static final int tileWidthInPixels = 100;
+    private static final int tileHeightInPixels = 100;
+    private static final int headerTileHeight = 100;
 
-    public void initialize(MineSweeperSettings settings) {
+    private int nrTilesHorizontal;
+    private Difficulty difficulty;
+
+    public GameDisplay(MineSweeperSettings settings) {
+        nrTilesHorizontal = settings.nrTilesHorizontal();
+        difficulty = settings.difficulty();
+    }
+
+    public void initialize() {
         getGameWorld().addEntityFactory(this);
 
         spawn("bannerBackground", 0, 0);
         spawn("remainingFlagCountBackground", 105, 10);
         flagCountDigit1 = spawn("remainingFlagCountDigit1", 109, 14);
         flagCountDigit2 = spawn("remainingFlagCountDigit2", 143, 14);
+        spawn("newGameTile", 400, 10);
         spawn("settingsTile", 500, 10);
+        spawn("difficultyTile", 600, 10);
 
-        spawnGridTiles(settings);
+        spawnGridTiles(composeSettings());
 
-        getEventBus().addEventHandler(GameEvents
-                .MineSweeperSettingsChangedEvent.MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE, this::onMineSweeperSettingsChangedEvent);
         getEventBus().addEventHandler(GameEvents
                 .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
     }
 
+    private MineSweeperSettings composeSettings() {
+        return new MineSweeperSettings(nrTilesHorizontal, difficulty);
+    }
+
     private void spawnGridTiles(MineSweeperSettings settings) {
-        boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesVertical()];
+        boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesHorizontal()];
 
-        int boardHeightInPixels = getAppHeight() - 100;
-
-        double scaleX = getAppWidth() / (double) (settings.nrTilesHorizontal() * tileWidthInPixels);
-        double scaleY = boardHeightInPixels / (double) (settings.nrTilesVertical() * tileHeightInPixels);
+        double scaleFactor = getAppWidth() / (double) (settings.nrTilesHorizontal() * tileWidthInPixels);
 
         for (int x = 0; x < settings.nrTilesHorizontal(); x++) {
-            for (int y = 0; y < settings.nrTilesVertical(); y++) {
+            for (int y = 0; y < settings.nrTilesHorizontal(); y++) {
                 double xOffset = (double) (x * getAppWidth()) / settings.nrTilesHorizontal();
-                double yOffset = y * ((double) boardHeightInPixels / settings.nrTilesVertical()) + 100;
-                scaledSpawn("tileBackground", xOffset, yOffset, scaleX, scaleY);
-                boardContent[x][y] = scaledSpawn("tile", xOffset, yOffset, scaleX, scaleY);
+                double yOffset = y * ((double) (getAppHeight() - headerTileHeight) / settings.nrTilesHorizontal()) + 100;
+                scaledSpawn("tileBackground", xOffset, yOffset, scaleFactor);
+                boardContent[x][y] = scaledSpawn("tile", xOffset, yOffset, scaleFactor);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
             }
         }
     }
 
-    private void onMineSweeperSettingsChangedEvent(GameEvents.MineSweeperSettingsChangedEvent mineSweeperSettingsChangedEvent) {
-        MineSweeperSettings mineSweeperSettings = mineSweeperSettingsChangedEvent.mineSweeperSettings;
-        spawnGridTiles(mineSweeperSettings);
-    }
-
-    private static Entity scaledSpawn(String entityName, double x, double y, double scaleX, double scaleY) {
+    private static Entity scaledSpawn(String entityName, double x, double y, double scaleFactor) {
         Entity tile = spawn(entityName, x, y);
-        tile.setScaleX(scaleX);
-        tile.setScaleY(scaleY);
+        tile.setScaleX(scaleFactor);
+        tile.setScaleY(scaleFactor);
         tile.setScaleOrigin(new Point2D(0, 0));
         return tile;
     }
@@ -104,15 +108,39 @@ public class GameDisplay implements EntityFactory {
         return tile;
     }
     @Spawns("settingsTile")
-    public Entity newSettingsTile(SpawnData data){
-        HitBox settingsTileHitbox = new HitBox(BoundingShape.box(100, 100));
+    public Entity newSettingsTile(SpawnData data) {
+        HitBox settingsTileHitBox = new HitBox(BoundingShape.box(100, 100));
         var settingsTile = entityBuilder(data)
-                .bbox(settingsTileHitbox)
+                .bbox(settingsTileHitBox)
                 .view("tileUnpressed.png")
                 .build();
-        settingsTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onSettingsClick());
+        settingsTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onSettingsTileClick());
 
         return settingsTile;
+    }
+
+    @Spawns("difficultyTile")
+    public Entity newDifficultyTile(SpawnData data) {
+        HitBox difficultyTileHitBox = new HitBox(BoundingShape.box(100, 100));
+        var difficultyTile = entityBuilder(data)
+                .bbox(difficultyTileHitBox)
+                .view("tileUnpressed.png")
+                .build();
+        difficultyTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onDifficultyTileClick());
+
+        return difficultyTile;
+    }
+
+    @Spawns("newGameTile")
+    public Entity newNewGameTile(SpawnData data) {
+        HitBox newGameTileHitBox = new HitBox(BoundingShape.box(100, 100));
+        var newGameTile = entityBuilder(data)
+                .bbox(newGameTileHitBox)
+                .view("tileUnpressed.png")
+                .build();
+        newGameTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onNewGameTileClick());
+
+        return newGameTile;
     }
 
     @Spawns("remainingFlagCountDigit1")
@@ -150,15 +178,25 @@ public class GameDisplay implements EntityFactory {
         moveType.ifPresent(m -> getEventBus().fireEvent(new GameEvents.MoveEvent(tileState.x, tileState.y, m)));
     }
 
-    private void onSettingsClick() {
-        getDialogService().showInputBox("Amount of tiles (Value between 1-30)", input -> {
-            int nrTiles = Math.max(1, Math.min(30, Integer.parseInt(input)));
-            getEventBus().fireEvent(
-                    new GameEvents.MineSweeperSettingsChangedEvent(
-                            new MineSweeperSettings(nrTiles, nrTiles, (int) (nrTiles * nrTiles * 0.3))
-                    )
-            );
-        });
+    private void onSettingsTileClick() {
+        getDialogService().showInputBox(
+                "Amount of tiles (Value between 1-30)",
+                input -> nrTilesHorizontal = Math.max(1, Math.min(30, Integer.parseInt(input)))
+        );
+    }
+
+    private void onDifficultyTileClick() {
+        getDialogService().showChoiceBox(
+                "Choose difficulty",
+                Difficulty.class,
+                diff -> difficulty = diff
+        );
+    }
+
+    private void onNewGameTileClick() {
+        MineSweeperSettings newSettings = composeSettings();
+        spawnGridTiles(newSettings);
+        getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
     }
 
     private void onBoardUpdatedEvent(GameEvents.BoardUpdatedEvent boardUpdatedEvent) {
@@ -172,19 +210,11 @@ public class GameDisplay implements EntityFactory {
         updateRemainingFlagCount(gameBoard);
 
         if (gameBoard.checkLosingState().isPresent()) {
-            getDialogService().showConfirmationBox("You Lose!" + "\nPlay again?", yes -> {
-                if (yes) {
-                    publishNewGame();
-                } else getGameController().exit();
-            });
+            getDialogService().showMessageBox("Too bad, you lose!");
         }
 
         if (gameBoard.checkWinningState()) {
-            getDialogService().showConfirmationBox("You win!" + "\nPlay again?", yes -> {
-                if (yes) {
-                    publishNewGame();
-                } else getGameController().exit();
-            });
+            getDialogService().showMessageBox("Congrats, you win!");
         }
     }
 
@@ -228,10 +258,6 @@ public class GameDisplay implements EntityFactory {
     private static void setImage(Entity entity, String image) {
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(FXGL.texture(image));
-    }
-
-    private void publishNewGame(){
-        getEventBus().fireEvent(new GameEvents.RestartGameEvent());
     }
 
     private static class TileStateComponent extends Component {

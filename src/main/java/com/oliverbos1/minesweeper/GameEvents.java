@@ -36,24 +36,14 @@ public class GameEvents {
         }
     }
 
-    public static class RestartGameEvent extends Event {
+    public static class NewGameEvent extends Event {
 
-        public static final EventType<RestartGameEvent> RESTART_GAME_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "RestartGameEvent");
-
-        public RestartGameEvent(){
-            super(RESTART_GAME_EVENT_EVENT_TYPE);
-        }
-
-    }
-
-    public static class MineSweeperSettingsChangedEvent extends Event {
-
-        public static final EventType<MineSweeperSettingsChangedEvent> MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "MineSweeperSettingsChangedEvent");
+        public static final EventType<NewGameEvent> NEW_GAME_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "NewGameEvent");
 
         public final MineSweeperSettings mineSweeperSettings;
 
-        public MineSweeperSettingsChangedEvent(MineSweeperSettings mineSweeperSettings){
-            super(MINE_SWEEPER_SETTINGS_CHANGED_EVENT_EVENT_TYPE);
+        public NewGameEvent(MineSweeperSettings mineSweeperSettings){
+            super(NEW_GAME_EVENT_EVENT_TYPE);
             this.mineSweeperSettings = mineSweeperSettings;
         }
 

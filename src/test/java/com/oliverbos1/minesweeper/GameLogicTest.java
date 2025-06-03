@@ -18,7 +18,7 @@ class GameLogicTest {
         Mockito.when(randomMock.nextInt(3)).thenReturn(0, 0, 1, 1, 2, 2);
 
         var gameLogic = new GameLogic(randomMock, eventBusMock);
-        gameLogic.initialize(new MineSweeperSettings(3, 3, 3));
+        gameLogic.initialize(new MineSweeperSettings(3, 3));
 
         assertTrue(gameLogic.gameBoard.getField(0, 0).hasMine());
         assertTrue(gameLogic.gameBoard.getField(1, 1).hasMine());

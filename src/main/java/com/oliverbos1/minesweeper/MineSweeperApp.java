@@ -10,9 +10,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getEventBus;
 
 public class MineSweeperApp extends GameApplication {
 
-    private final GameDisplay gameDisplay = new GameDisplay();
-
-    MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(10, 10, 20);
+    MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(10, Difficulty.EASY);
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -36,7 +34,8 @@ public class MineSweeperApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        gameDisplay.initialize(mineSweeperSettings);
+        GameDisplay gameDisplay = new GameDisplay(mineSweeperSettings);
+        gameDisplay.initialize();
     }
 
     public static void main(String[] args) {
