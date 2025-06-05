@@ -12,6 +12,7 @@ public class GameEvents {
         public enum MoveType {
             FlagPlaced, TileOpened
         }
+
         public final int x;
         public final int y;
         public final MoveType moveType;
@@ -42,7 +43,7 @@ public class GameEvents {
 
         public final MineSweeperSettings mineSweeperSettings;
 
-        public NewGameEvent(MineSweeperSettings mineSweeperSettings){
+        public NewGameEvent(MineSweeperSettings mineSweeperSettings) {
             super(NEW_GAME_EVENT_EVENT_TYPE);
             this.mineSweeperSettings = mineSweeperSettings;
         }

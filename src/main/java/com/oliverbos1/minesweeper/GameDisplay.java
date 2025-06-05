@@ -89,6 +89,7 @@ public class GameDisplay implements EntityFactory {
                 .view("bannerBackgroundNoTitle.png")
                 .build();
     }
+
     @Spawns("tileBackground")
     public Entity newTileBackground(SpawnData data) {
 
@@ -96,6 +97,7 @@ public class GameDisplay implements EntityFactory {
                 .view("tileBackground.png")
                 .build();
     }
+
     @Spawns("tile")
     public Entity newTile(SpawnData data) {
         HitBox tileHitBox = new HitBox(BoundingShape.box(tileWidthInPixels, tileHeightInPixels));
@@ -107,6 +109,7 @@ public class GameDisplay implements EntityFactory {
 
         return tile;
     }
+
     @Spawns("settingsTile")
     public Entity newSettingsTile(SpawnData data) {
         HitBox settingsTileHitBox = new HitBox(BoundingShape.box(100, 100));
@@ -150,6 +153,7 @@ public class GameDisplay implements EntityFactory {
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
     }
+
     @Spawns("remainingFlagCountDigit2")
     public Entity newRemainingFlagsCountDigit2(SpawnData data) {
 
@@ -157,6 +161,7 @@ public class GameDisplay implements EntityFactory {
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
     }
+
     @Spawns("remainingFlagCountBackground")
     public Entity newRemainingFlagsCountBackground(SpawnData data) {
 
@@ -234,7 +239,7 @@ public class GameDisplay implements EntityFactory {
         return image;
     }
 
-    private void updateRemainingFlagCount (GameBoard gameBoard) {
+    private void updateRemainingFlagCount(GameBoard gameBoard) {
         int digit1;
         int digit2;
 

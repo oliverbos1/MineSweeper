@@ -1,7 +1,9 @@
 package com.oliverbos1.minesweeper;
 
 import com.almasb.fxgl.event.EventBus;
+
 import java.util.Random;
+
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getEventBus;
 
 public class GameLogic {
