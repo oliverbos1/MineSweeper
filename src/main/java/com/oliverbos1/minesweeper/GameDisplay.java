@@ -48,13 +48,13 @@ public class GameDisplay implements EntityFactory {
         spawn("settingsTile", 500, 10);
         spawn("difficultyTile", 600, 10);
 
-        spawnGridTiles(composeSettings());
+        spawnGridTiles(composeNewSettings());
 
         getEventBus().addEventHandler(GameEvents
                 .BoardUpdatedEvent.BOARD_UPDATED_EVENT_EVENT_TYPE, this::onBoardUpdatedEvent);
     }
 
-    private MineSweeperSettings composeSettings() {
+    private MineSweeperSettings composeNewSettings() {
         return new MineSweeperSettings(nrTilesHorizontal, difficulty);
     }
 
@@ -199,7 +199,7 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void onNewGameTileClick() {
-        MineSweeperSettings newSettings = composeSettings();
+        MineSweeperSettings newSettings = composeNewSettings();
         spawnGridTiles(newSettings);
         getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
     }
