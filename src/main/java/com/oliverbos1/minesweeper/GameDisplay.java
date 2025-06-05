@@ -176,8 +176,8 @@ public class GameDisplay implements EntityFactory {
         System.out.println(STR."tileClicked. x: \{tileState.x} y: \{tileState.y} button: \{button}");
 
         var moveType = switch (button) {
-            case PRIMARY -> Optional.of(MoveType.TileOpened);
-            case SECONDARY -> Optional.of(MoveType.FlagPlaced);
+            case PRIMARY -> Optional.of(MoveType.TILE_OPENED);
+            case SECONDARY -> Optional.of(MoveType.FLAG_PLACED);
             default -> Optional.<MoveType>empty();
         };
         moveType.ifPresent(m -> getEventBus().fireEvent(new GameEvents.MoveEvent(tileState.x, tileState.y, m)));

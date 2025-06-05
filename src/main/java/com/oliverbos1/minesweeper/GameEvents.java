@@ -10,7 +10,8 @@ public class GameEvents {
         public static final EventType<MoveEvent> MOVE_EVENT_TYPE = new EventType<>(Event.ANY, "MoveEvent");
 
         public enum MoveType {
-            FlagPlaced, TileOpened
+            FLAG_PLACED,
+            TILE_OPENED
         }
 
         public final int x;

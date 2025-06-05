@@ -67,8 +67,8 @@ public class GameLogic {
     private void onMoveEvent(GameEvents.MoveEvent e) {
         System.out.println("onMoveEvent");
         switch (e.moveType) {
-            case TileOpened -> tileOpened(e.x, e.y);
-            case FlagPlaced -> flagPlaced(e.x, e.y);
+            case TILE_OPENED -> tileOpened(e.x, e.y);
+            case FLAG_PLACED -> flagPlaced(e.x, e.y);
         }
     }
 
