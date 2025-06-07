@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
@@ -124,7 +125,7 @@ public class GameDisplay implements EntityFactory {
         HitBox settingsTileHitBox = new HitBox(BoundingShape.box(100, 100));
         var settingsTile = entityBuilder(data)
                 .bbox(settingsTileHitBox)
-                .view("tileUnpressed.png")
+                .view("gameSizeTile.png")
                 .build();
         settingsTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onSettingsTileClick());
 
