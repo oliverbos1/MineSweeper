@@ -14,7 +14,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
-import java.text.MessageFormat;
 import java.util.Optional;
 
 import static com.almasb.fxgl.dsl.FXGL.getDialogService;
