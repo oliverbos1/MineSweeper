@@ -24,6 +24,7 @@ public class GameDisplay implements EntityFactory {
     private Entity[][] boardContent;
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
+    private Entity newGameTile = new Entity();
 
     private static final int tileWidthInPixels = 100;
     private static final int tileHeightInPixels = 100;
@@ -41,12 +42,12 @@ public class GameDisplay implements EntityFactory {
         getGameWorld().addEntityFactory(this);
 
         spawn("bannerBackground", 0, 0);
-        spawn("remainingFlagCountBackground", 105, 10);
-        flagCountDigit1 = spawn("remainingFlagCountDigit1", 109, 14);
-        flagCountDigit2 = spawn("remainingFlagCountDigit2", 143, 14);
-        spawn("newGameTile", 400, 10);
-        spawn("settingsTile", 500, 10);
-        spawn("difficultyTile", 600, 10);
+        spawn("remainingFlagCountBackground", 10, 10);
+        flagCountDigit1 = spawn("remainingFlagCountDigit1", 14, 14);
+        flagCountDigit2 = spawn("remainingFlagCountDigit2", 48, 14);
+        newGameTile = scaledSpawnSettingsTile("newGameTile", 460);
+        scaledSpawnSettingsTile("settingsTile", 800);
+        scaledSpawnSettingsTile("difficultyTile", 900);
 
         spawnGridTiles(composeNewSettings());
 
@@ -67,17 +68,25 @@ public class GameDisplay implements EntityFactory {
             for (int y = 0; y < settings.nrTilesHorizontal(); y++) {
                 double xOffset = (double) (x * getAppWidth()) / settings.nrTilesHorizontal();
                 double yOffset = y * ((double) (getAppHeight() - headerTileHeight) / settings.nrTilesHorizontal()) + 100;
-                scaledSpawn("tileBackground", xOffset, yOffset, scaleFactor);
-                boardContent[x][y] = scaledSpawn("tile", xOffset, yOffset, scaleFactor);
+                scaledSpawnGridTile("tileBackground", xOffset, yOffset, scaleFactor);
+                boardContent[x][y] = scaledSpawnGridTile("tile", xOffset, yOffset, scaleFactor);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
             }
         }
     }
 
-    private static Entity scaledSpawn(String entityName, double x, double y, double scaleFactor) {
+    private static Entity scaledSpawnGridTile(String entityName, double x, double y, double scaleFactor) {
         Entity tile = spawn(entityName, x, y);
         tile.setScaleX(scaleFactor);
         tile.setScaleY(scaleFactor);
+        tile.setScaleOrigin(new Point2D(0, 0));
+        return tile;
+    }
+
+    private static Entity scaledSpawnSettingsTile(String entityName, double x) {
+        Entity tile = spawn(entityName, x, 10);
+        tile.setScaleX(0.78);
+        tile.setScaleY(0.78);
         tile.setScaleOrigin(new Point2D(0, 0));
         return tile;
     }
@@ -139,7 +148,7 @@ public class GameDisplay implements EntityFactory {
         HitBox newGameTileHitBox = new HitBox(BoundingShape.box(100, 100));
         var newGameTile = entityBuilder(data)
                 .bbox(newGameTileHitBox)
-                .view("tileUnpressed.png")
+                .view("newGameTile/newGameTileDefault.png")
                 .build();
         newGameTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onNewGameTileClick());
 
@@ -202,6 +211,7 @@ public class GameDisplay implements EntityFactory {
         MineSweeperSettings newSettings = composeNewSettings();
         spawnGridTiles(newSettings);
         getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
+        setImage(newGameTile, "newGameTile/newGameTileDefault.png");
     }
 
     private void onBoardUpdatedEvent(GameEvents.BoardUpdatedEvent boardUpdatedEvent) {
@@ -216,10 +226,12 @@ public class GameDisplay implements EntityFactory {
 
         if (gameBoard.checkLosingState().isPresent()) {
             getDialogService().showMessageBox("Too bad, you lose!");
+            setImage(newGameTile, "newGameTile/newGameTileLost.png");
         }
 
         if (gameBoard.checkWinningState()) {
             getDialogService().showMessageBox("Congrats, you win!");
+            setImage(newGameTile, "newGameTile/newGameTileWon.png");
         }
     }
 
@@ -243,9 +255,7 @@ public class GameDisplay implements EntityFactory {
         int digit1;
         int digit2;
 
-        int remainingFlagCount = gameBoard.getMineAmount() - gameBoard.getFlagAmount();
-        if (remainingFlagCount < 0) remainingFlagCount = 0;
-        if (remainingFlagCount > 99) remainingFlagCount = 99;
+        int remainingFlagCount = Math.max(0, Math.min(99, gameBoard.getMineAmount() - gameBoard.getFlagAmount()));
 
         if (remainingFlagCount < 10) digit1 = 0;
         else digit1 = remainingFlagCount / 10;

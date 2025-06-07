@@ -48,9 +48,9 @@ public class GameLogic {
 
     private int calcMineAmount(MineSweeperSettings settings) {
         return (int) (settings.nrTilesHorizontal() * settings.nrTilesHorizontal() * switch (settings.difficulty()) {
-            case EASY -> 0.3;
-            case MEDIUM -> 0.4;
-            case HARD -> 0.5;
+            case EASY -> 0.15625;
+            case MEDIUM -> 0.3;
+            case HARD -> 0.4;
         });
     }
 

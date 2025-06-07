@@ -10,7 +10,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getEventBus;
 
 public class MineSweeperApp extends GameApplication {
 
-    MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(10, Difficulty.EASY);
+    MineSweeperSettings mineSweeperSettings = new MineSweeperSettings(16, Difficulty.EASY);
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
