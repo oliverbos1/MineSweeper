@@ -79,7 +79,7 @@
                     <noManPages>true</noManPages>
                     <launcher>Start-game</launcher>
                     <jlinkImageName>mineSweeper</jlinkImageName>
-                    <jlinkZipName>mineSweeperZip</jlinkZipName>
+                    <jlinkZipName>mineSweeper</jlinkZipName>
                     <mainClass>com.oliverbos1.minesweeper.MineSweeperApp</mainClass>
                 </configuration>
             </plugin>
