@@ -47,7 +47,7 @@ public class GameLogic {
     }
 
     private int calcMineAmount(MineSweeperSettings settings) {
-        return (int) (settings.nrTilesHorizontal() * settings.nrTilesHorizontal() * switch (settings.difficulty()) {
+        return (int) Math.round(settings.nrTilesHorizontal() * settings.nrTilesHorizontal() * switch (settings.difficulty()) {
             case EASY -> 0.15625;
             case MEDIUM -> 0.2;
             case HARD -> 0.3;
@@ -66,9 +66,11 @@ public class GameLogic {
 
     private void onMoveEvent(GameEvents.MoveEvent e) {
         System.out.println("onMoveEvent");
-        switch (e.moveType) {
-            case TILE_OPENED -> tileOpened(e.x, e.y);
-            case FLAG_PLACED -> flagPlaced(e.x, e.y);
+        if (!gameBoard.gameFinished()) {
+            switch (e.moveType) {
+                case TILE_OPENED -> tileOpened(e.x, e.y);
+                case FLAG_PLACED -> flagPlaced(e.x, e.y);
+            }
         }
     }
 

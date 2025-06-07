@@ -70,7 +70,8 @@ public class GameDisplay implements EntityFactory {
         for (int x = 0; x < settings.nrTilesHorizontal(); x++) {
             for (int y = 0; y < settings.nrTilesHorizontal(); y++) {
                 double xOffset = (double) (x * getAppWidth()) / settings.nrTilesHorizontal();
-                double yOffset = y * ((double) (getAppHeight() - headerTileHeight) / settings.nrTilesHorizontal()) + 100;
+                double yOffset =
+                        y * ((double) (getAppHeight() - headerTileHeight) / settings.nrTilesHorizontal()) + 100;
                 scaledSpawnGridTile("tileBackground", xOffset, yOffset, scaleFactor);
                 boardContent[x][y] = scaledSpawnGridTile("tile", xOffset, yOffset, scaleFactor);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
@@ -198,9 +199,21 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void onGameSizeTileClick() {
-        getDialogService().showInputBox(
-                "Amount of tiles (Value between 1-30)",
-                input -> nrTilesHorizontal = Math.max(1, Math.min(30, Integer.parseInt(input)))
+        getDialogService().showInputBoxWithCancel(
+                "Amount of tiles (Value from 1 to 50)",
+                input -> {
+                    try {
+                        int parsedInput = Integer.parseInt(input);
+                        return !(parsedInput < 1 || parsedInput > 50);
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                },
+                input -> {
+                    if (!input.isBlank()) {
+                        nrTilesHorizontal = Integer.parseInt(input);
+                    }
+                }
         );
     }
 

@@ -63,6 +63,10 @@ public class GameBoard {
         }
     }
 
+    public boolean gameFinished() {
+        return checkWinningState() || checkLosingState().isPresent();
+    }
+
     public boolean checkWinningState() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
