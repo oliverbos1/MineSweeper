@@ -20,6 +20,7 @@ import java.util.Optional;
 import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
+@SuppressWarnings("preview")
 public class GameDisplay implements EntityFactory {
     private Entity[][] boardContent;
     private Entity flagCountDigit1 = new Entity();
@@ -188,8 +189,7 @@ public class GameDisplay implements EntityFactory {
 
     private void onTileClick(Entity tile, MouseButton button) {
         TileStateComponent tileState = tile.getComponent(TileStateComponent.class);
-        System.out.println(MessageFormat.format("tileClicked. x: {0} y: {1} button: {2}", tileState.x, tileState.y,
-                button));
+        System.out.println(STR."tileClicked. x: \{tileState.x} y: \{tileState.y} button: \{button}");
 
         var moveType = switch (button) {
             case PRIMARY -> Optional.of(MoveType.TILE_OPENED);
@@ -265,7 +265,7 @@ public class GameDisplay implements EntityFactory {
         if (!field.isOpen() && !field.hasFlag()) image = "tileUnpressed.png";
         else if (!field.isOpen()) image = "tileFlag.png";
         else if (field.hasMine()) image = "tileMine.png";
-        else image = MessageFormat.format("mineNumbers/mineCount{0}.png", field.adjacentMineCount());
+        else image = STR."mineNumbers/mineCount\{field.adjacentMineCount()}.png";
 
         return image;
     }
@@ -279,15 +279,14 @@ public class GameDisplay implements EntityFactory {
         if (remainingFlagCount < 10) digit1 = 0;
         else digit1 = remainingFlagCount / 10;
         digit2 = remainingFlagCount % 10;
-        String remainingFlagCountImageDigit1 = MessageFormat.format("remainingFlagCountNumber/count{0}.png", digit1);
-        String remainingFlagCountImageDigit2 = MessageFormat.format("remainingFlagCountNumber/count{0}.png", digit2);
+        String remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
+        String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}.png";
 
         setImage(flagCountDigit1, remainingFlagCountImageDigit1);
         setImage(flagCountDigit2, remainingFlagCountImageDigit2);
 
-        System.out.println(MessageFormat.format("getMineAmount: {0} getFlgAmount: {1}", gameBoard.getMineAmount(),
-                gameBoard.getFlagAmount()));
-        System.out.println(MessageFormat.format("Digit 1: {0} Digit 2: {1}", digit1, digit2));
+        System.out.println(STR."getMineAmount: \{gameBoard.getMineAmount()} getFlgAmount: \{gameBoard.getFlagAmount()}");
+        System.out.println(STR."Digit 1: \{digit1} Digit 2: \{digit2}");
     }
 
     private static void setImage(Entity entity, String image) {
