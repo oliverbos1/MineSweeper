@@ -45,9 +45,12 @@ public class GameDisplay implements EntityFactory {
         spawn("remainingFlagCountBackground", 10, 10);
         flagCountDigit1 = spawn("remainingFlagCountDigit1", 14, 14);
         flagCountDigit2 = spawn("remainingFlagCountDigit2", 48, 14);
-        newGameTile = scaledSpawnSettingsTile("newGameTile", 460);
-        scaledSpawnSettingsTile("settingsTile", 800);
-        scaledSpawnSettingsTile("difficultyTile", 900);
+        spawn("settingTileBackground", 460, 10);
+        newGameTile = scaledSpawnSettingsTile("newGameTile", 464);
+        spawn("settingTileBackground", 840, 10);
+        scaledSpawnSettingsTile("gameSizeTile", 844);
+        spawn("settingTileBackground", 910, 10);
+        scaledSpawnSettingsTile("difficultyTile", 914);
 
         spawnGridTiles(composeNewSettings());
 
@@ -84,16 +87,15 @@ public class GameDisplay implements EntityFactory {
     }
 
     private static Entity scaledSpawnSettingsTile(String entityName, double x) {
-        Entity tile = spawn(entityName, x, 10);
-        tile.setScaleX(0.78);
-        tile.setScaleY(0.78);
+        Entity tile = spawn(entityName, x, 14);
+        tile.setScaleX(0.7);
+        tile.setScaleY(0.7);
         tile.setScaleOrigin(new Point2D(0, 0));
         return tile;
     }
 
     @Spawns("bannerBackground")
     public Entity newBannerBackground(SpawnData data) {
-
         return entityBuilder(data)
                 .view("bannerBackgroundNoTitle.png")
                 .build();
@@ -101,7 +103,6 @@ public class GameDisplay implements EntityFactory {
 
     @Spawns("tileBackground")
     public Entity newTileBackground(SpawnData data) {
-
         return entityBuilder(data)
                 .view("tileBackground.png")
                 .build();
@@ -119,16 +120,23 @@ public class GameDisplay implements EntityFactory {
         return tile;
     }
 
-    @Spawns("settingsTile")
-    public Entity newSettingsTile(SpawnData data) {
-        HitBox settingsTileHitBox = new HitBox(BoundingShape.box(100, 100));
-        var settingsTile = entityBuilder(data)
-                .bbox(settingsTileHitBox)
+    @Spawns("settingTileBackground")
+    public Entity newSettingTileBackground(SpawnData data) {
+        return entityBuilder(data)
+                .view("settingTileBackground.png")
+                .build();
+    }
+
+    @Spawns("gameSizeTile")
+    public Entity newGameSizeTile(SpawnData data) {
+        HitBox gameSizeTileHitBox = new HitBox(BoundingShape.box(100, 100));
+        var gameSizeTile = entityBuilder(data)
+                .bbox(gameSizeTileHitBox)
                 .view("gameSizeTile.png")
                 .build();
-        settingsTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onSettingsTileClick());
+        gameSizeTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onGameSizeTileClick());
 
-        return settingsTile;
+        return gameSizeTile;
     }
 
     @Spawns("difficultyTile")
@@ -136,7 +144,7 @@ public class GameDisplay implements EntityFactory {
         HitBox difficultyTileHitBox = new HitBox(BoundingShape.box(100, 100));
         var difficultyTile = entityBuilder(data)
                 .bbox(difficultyTileHitBox)
-                .view("tileUnpressed.png")
+                .view("gameDifficultyTile.png")
                 .build();
         difficultyTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onDifficultyTileClick());
 
@@ -157,7 +165,6 @@ public class GameDisplay implements EntityFactory {
 
     @Spawns("remainingFlagCountDigit1")
     public Entity newRemainingFlagsCountDigit1(SpawnData data) {
-
         return entityBuilder(data)
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
@@ -165,7 +172,6 @@ public class GameDisplay implements EntityFactory {
 
     @Spawns("remainingFlagCountDigit2")
     public Entity newRemainingFlagsCountDigit2(SpawnData data) {
-
         return entityBuilder(data)
                 .view("remainingFlagCountNumber/count0.png")
                 .build();
@@ -173,7 +179,6 @@ public class GameDisplay implements EntityFactory {
 
     @Spawns("remainingFlagCountBackground")
     public Entity newRemainingFlagsCountBackground(SpawnData data) {
-
         return entityBuilder(data)
                 .view("remainingFlagCountNumber/background.png")
                 .build();
@@ -192,7 +197,7 @@ public class GameDisplay implements EntityFactory {
         moveType.ifPresent(m -> getEventBus().fireEvent(new GameEvents.MoveEvent(tileState.x, tileState.y, m)));
     }
 
-    private void onSettingsTileClick() {
+    private void onGameSizeTileClick() {
         getDialogService().showInputBox(
                 "Amount of tiles (Value between 1-30)",
                 input -> nrTilesHorizontal = Math.max(1, Math.min(30, Integer.parseInt(input)))
