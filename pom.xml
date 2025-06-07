@@ -77,7 +77,7 @@
                     <compress>2</compress>
                     <noHeaderFiles>true</noHeaderFiles>
                     <noManPages>true</noManPages>
-                    <launcher>Start-game</launcher>
+                    <launcher>MineSweeperStart</launcher>
                     <jlinkImageName>mineSweeper</jlinkImageName>
                     <jlinkZipName>mineSweeper</jlinkZipName>
                     <mainClass>com.oliverbos1.minesweeper.MineSweeperApp</mainClass>
