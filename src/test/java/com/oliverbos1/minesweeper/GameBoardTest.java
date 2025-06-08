@@ -11,7 +11,7 @@ class GameBoardTest {
     @Test
     void checkAdjacentMines() {
 
-        GameBoard gameBoard = new GameBoard(4,4);
+        GameBoard gameBoard = new GameBoard(4, 4);
         gameBoard.setField(1, 2, new GameBoard.FieldState(false, true, false, 0));
         gameBoard.setField(3, 2, new GameBoard.FieldState(false, true, false, 0));
 
@@ -23,7 +23,7 @@ class GameBoardTest {
     @Test
     void checkAdjacentMinesEdgeMin() {
 
-        GameBoard gameBoard = new GameBoard(4,4);
+        GameBoard gameBoard = new GameBoard(4, 4);
         gameBoard.setField(1, 1, new GameBoard.FieldState(false, true, false, 0));
         gameBoard.setField(3, 2, new GameBoard.FieldState(false, true, false, 0));
 
@@ -35,7 +35,7 @@ class GameBoardTest {
     @Test
     void checkAdjacentMinesEdgeMax() {
 
-        GameBoard gameBoard = new GameBoard(4,4);
+        GameBoard gameBoard = new GameBoard(4, 4);
         gameBoard.setField(1, 2, new GameBoard.FieldState(false, true, false, 0));
         gameBoard.setField(3, 2, new GameBoard.FieldState(false, true, false, 0));
 
@@ -54,21 +54,48 @@ class GameBoardTest {
     @Test
     void checkWinningStateTrue() {
 
-        GameBoard gameBoard = new GameBoard(2,2);
-        gameBoard.setField(0, 0, new GameBoard.FieldState(false, true, true, 0));
-        gameBoard.setField(0, 1, new GameBoard.FieldState(true, false, false, 0));
+        GameBoard gameBoard = new GameBoard(3, 3);
+        gameBoard.setField(0, 0, new GameBoard.FieldState(true, false, false, 0));
+        gameBoard.setField(0, 1, new GameBoard.FieldState(false, false, false, 0));
+        gameBoard.setField(0, 2, new GameBoard.FieldState(false, true, true, 0));
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, true, 0));
-        gameBoard.setField(1, 1, new GameBoard.FieldState(true, false, false, 0));
+        gameBoard.setField(1, 1, new GameBoard.FieldState(false, true, true, 0));
+        gameBoard.setField(1, 2, new GameBoard.FieldState(true, false, false, 0));
+        gameBoard.setField(2, 0, new GameBoard.FieldState(true, false, false, 0));
+        gameBoard.setField(2, 1, new GameBoard.FieldState(true, false, false, 0));
+        gameBoard.setField(2, 2, new GameBoard.FieldState(true, false, false, 0));
 
         var result = gameBoard.checkWinningState();
 
-        assertEquals(true, result);
+        assertTrue(result);
+    }
+
+    @Test
+    void checkWinningStateCases() {
+        GameBoard gameBoard = new GameBoard(1, 1);
+
+        gameBoard.setField(0, 0, new GameBoard.FieldState(false, false, false, 0));
+        assertTrue(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(false, false, true, 0));
+        assertFalse(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(false, true, false, 0));
+        assertFalse(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(false, true, true, 0));
+        assertTrue(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(true, false, false, 0));
+        assertTrue(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(true, false, true, 0));
+        assertFalse(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(true, true, false, 0));
+        assertFalse(gameBoard.checkWinningState());
+        gameBoard.setField(0, 0, new GameBoard.FieldState(true, true, true, 0));
+        assertTrue(gameBoard.checkWinningState());
     }
 
     @Test
     void checkWinningStateFalse() {
 
-        GameBoard gameBoard = new GameBoard(2,2);
+        GameBoard gameBoard = new GameBoard(2, 2);
         gameBoard.setField(0, 0, new GameBoard.FieldState(false, true, true, 0));
         gameBoard.setField(0, 1, new GameBoard.FieldState(true, false, false, 0));
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, false, 0));
@@ -76,13 +103,13 @@ class GameBoardTest {
 
         var result = gameBoard.checkWinningState();
 
-        assertEquals(false, result);
+        assertFalse(result);
     }
 
     @Test
     void checkLosingStateTrue() {
 
-        GameBoard gameBoard = new GameBoard(2,2);
+        GameBoard gameBoard = new GameBoard(2, 2);
         gameBoard.setField(0, 0, new GameBoard.FieldState(true, true, false, 0));
         gameBoard.setField(0, 1, new GameBoard.FieldState(true, false, false, 0));
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, true, true, 0));
@@ -97,7 +124,7 @@ class GameBoardTest {
     @Test
     void checkLosingStateFalse() {
 
-        GameBoard gameBoard = new GameBoard(2,2);
+        GameBoard gameBoard = new GameBoard(2, 2);
         gameBoard.setField(0, 0, new GameBoard.FieldState(false, true, true, 0));
         gameBoard.setField(0, 1, new GameBoard.FieldState(true, false, false, 0));
         gameBoard.setField(1, 0, new GameBoard.FieldState(false, false, true, 0));

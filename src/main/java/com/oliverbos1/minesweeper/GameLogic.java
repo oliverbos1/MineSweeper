@@ -93,6 +93,9 @@ public class GameLogic {
             if (gameBoard.checkLosingState().isPresent()) {
                 openBoard();
             }
+            if (gameBoard.checkWinningState()) {
+                openBoard();
+            }
             publishBoard(gameBoard);
         }
     }

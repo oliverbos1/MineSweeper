@@ -70,8 +70,8 @@ public class GameBoard {
     public boolean checkWinningState() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if (!((getField(x, y).isOpen && !getField(x, y).hasMine) ||
-                        (getField(x, y).hasMine && getField(x, y).hasFlag))) {
+                if ((getField(x, y).hasMine && !getField(x, y).hasFlag) ||
+                        (!getField(x, y).hasMine && getField(x, y).hasFlag)) {
                     return false;
                 }
             }
