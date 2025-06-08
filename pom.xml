@@ -81,6 +81,7 @@
                     <jlinkImageName>mineSweeper</jlinkImageName>
                     <jlinkZipName>mineSweeper</jlinkZipName>
                     <mainClass>com.oliverbos1.minesweeper.MineSweeperApp</mainClass>
+                    <options>--enable-preview</options>
                 </configuration>
             </plugin>
 
