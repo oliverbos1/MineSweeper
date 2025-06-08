@@ -26,6 +26,7 @@ public class GameDisplay implements EntityFactory {
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
     private Entity newGameTile = new Entity();
+    private Entity difficultyTile = new Entity();
 
     private static final int tileWidthInPixels = 100;
     private static final int tileHeightInPixels = 100;
@@ -47,12 +48,15 @@ public class GameDisplay implements EntityFactory {
         flagCountDigit0 = spawn("remainingFlagCountDigit", 14, 14);
         flagCountDigit1 = spawn("remainingFlagCountDigit", 47, 14);
         flagCountDigit2 = spawn("remainingFlagCountDigit", 80, 14);
+
         spawn("settingTileBackground", 460, 10);
         newGameTile = scaledSpawnSettingsTile("newGameTile", 464);
+
         spawn("settingTileBackground", 840, 10);
         scaledSpawnSettingsTile("gameSizeTile", 844);
+
         spawn("settingTileBackground", 910, 10);
-        scaledSpawnSettingsTile("difficultyTile", 914);
+        difficultyTile = scaledSpawnSettingsTile("difficultyTile", 914);
 
         spawnGridTiles(composeNewSettings());
 
@@ -147,7 +151,7 @@ public class GameDisplay implements EntityFactory {
         HitBox difficultyTileHitBox = new HitBox(BoundingShape.box(100, 100));
         var difficultyTile = entityBuilder(data)
                 .bbox(difficultyTileHitBox)
-                .view("gameDifficultyTile.png")
+                .view("gameDifficultyTileEASY.png")
                 .build();
         difficultyTile.getViewComponent().addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> onDifficultyTileClick());
 
@@ -221,6 +225,9 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void onNewGameTileClick() {
+
+        setImage(difficultyTile, STR."gameDifficultyTile\{difficulty}.png");
+
         MineSweeperSettings newSettings = composeNewSettings();
         spawnGridTiles(newSettings);
         getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
