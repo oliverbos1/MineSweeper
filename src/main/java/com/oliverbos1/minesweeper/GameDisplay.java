@@ -225,9 +225,7 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void onNewGameTileClick() {
-
         setImage(difficultyTile, STR."gameDifficultyTile\{difficulty}.png");
-
         MineSweeperSettings newSettings = composeNewSettings();
         spawnGridTiles(newSettings);
         getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
