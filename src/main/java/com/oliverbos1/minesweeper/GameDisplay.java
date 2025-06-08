@@ -237,14 +237,17 @@ public class GameDisplay implements EntityFactory {
 
         updateRemainingFlagCount(gameBoard);
 
-        if (gameBoard.checkLosingState().isPresent()) {
-            getDialogService().showMessageBox("Too bad, you lose!");
-            setImage(newGameTile, "newGameTile/newGameTileLost.png");
-        }
-
-        if (gameBoard.checkWinningState()) {
-            getDialogService().showMessageBox("Congrats, you win!");
-            setImage(newGameTile, "newGameTile/newGameTileWon.png");
+        switch (gameBoard.getGameBoardState()) {
+            case LOST -> {
+                getDialogService().showMessageBox("Too bad, you lose!");
+                setImage(newGameTile, "newGameTile/newGameTileLost.png");
+            }
+            case WON -> {
+                getDialogService().showMessageBox("Congrats, you win!");
+                setImage(newGameTile, "newGameTile/newGameTileWon.png");
+            }
+            default -> {
+            }
         }
     }
 

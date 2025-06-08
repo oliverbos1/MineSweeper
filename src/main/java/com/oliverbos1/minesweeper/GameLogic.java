@@ -2,6 +2,7 @@ package com.oliverbos1.minesweeper;
 
 import com.almasb.fxgl.event.EventBus;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getEventBus;
@@ -66,12 +67,41 @@ public class GameLogic {
 
     private void onMoveEvent(GameEvents.MoveEvent e) {
         System.out.println("onMoveEvent");
-        if (!gameBoard.gameFinished()) {
+        if (!gameFinished()) {
             switch (e.moveType) {
                 case TILE_OPENED -> tileOpened(e.x, e.y);
                 case FLAG_PLACED -> flagPlaced(e.x, e.y);
             }
         }
+    }
+
+    private boolean gameFinished() {
+        return checkWinningState() || checkLosingState().isPresent();
+    }
+
+    private boolean checkWinningState() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if ((gameBoard.getField(x, y).hasMine() && !gameBoard.getField(x, y).hasFlag()) ||
+                        (!gameBoard.getField(x, y).hasMine() && gameBoard.getField(x, y).hasFlag())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private Optional<GameBoard.Coordinates> checkLosingState() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (gameBoard.getField(x, y).hasMine() && gameBoard.getField(x, y).isOpen()) {
+                    return Optional.of(new GameBoard.Coordinates(x, y));
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 
     private void openBoard() {
@@ -89,10 +119,9 @@ public class GameLogic {
     private void tileOpened(int x, int y) {
         if (!gameBoard.getField(x, y).hasFlag()) {
             tileOpenRecursion(x, y);
+            updateGameState();
 
-            if (gameBoard.checkLosingState().isPresent()) {
-                openBoard();
-            }
+            openBoardOnGameFinished();
             publishBoard(gameBoard);
         }
     }
@@ -113,6 +142,22 @@ public class GameLogic {
         }
     }
 
+    private void updateGameState() {
+        final GameBoardState newState;
+
+        if (checkWinningState()) newState = GameBoardState.WON;
+        else if (checkLosingState().isPresent()) newState = GameBoardState.LOST;
+        else newState = GameBoardState.PLAYING;
+
+        gameBoard.setGameBoardState(newState);
+    }
+
+    private void openBoardOnGameFinished() {
+        if (gameBoard.getGameBoardState() != GameBoardState.PLAYING) {
+            openBoard();
+        }
+    }
+
     private void flagPlaced(int x, int y) {
 
         GameBoard.FieldState existingField = gameBoard.getField(x, y);
@@ -120,9 +165,8 @@ public class GameLogic {
             gameBoard.setField(x, y, existingField.withHasFlag(!existingField.hasFlag()));
         }
 
-        if (gameBoard.checkWinningState()) {
-            openBoard();
-        }
+        updateGameState();
+        openBoardOnGameFinished();
 
         publishBoard(gameBoard);
     }

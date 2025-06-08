@@ -4,11 +4,13 @@ import java.util.*;
 
 public class GameBoard {
 
+    private GameBoardState gameBoardState;
     private final FieldState[][] fields;
     private final int width;
     private final int height;
 
     public GameBoard(int width, int height) {
+        this.gameBoardState = GameBoardState.PLAYING;
         this.width = width;
         this.height = height;
         this.fields = new FieldState[width][height];
@@ -63,35 +65,6 @@ public class GameBoard {
         }
     }
 
-    public boolean gameFinished() {
-        return checkWinningState() || checkLosingState().isPresent();
-    }
-
-    public boolean checkWinningState() {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if ((getField(x, y).hasMine && !getField(x, y).hasFlag) ||
-                        (!getField(x, y).hasMine && getField(x, y).hasFlag)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public Optional<Coordinates> checkLosingState() {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (getField(x, y).hasMine && getField(x, y).isOpen) {
-                    return Optional.of(new Coordinates(x, y));
-                }
-            }
-        }
-
-        return Optional.empty();
-    }
-
     public int checkAdjacentMines(int xPar, int yPar) {
         return adjacentTileCoordinates(xPar, yPar)
                 .stream()
@@ -115,6 +88,14 @@ public class GameBoard {
             }
         }
         return coordinates;
+    }
+
+    public GameBoardState getGameBoardState() {
+        return gameBoardState;
+    }
+
+    public void setGameBoardState(GameBoardState gameBoardState) {
+        this.gameBoardState = gameBoardState;
     }
 
     public record Coordinates(int x, int y) {
