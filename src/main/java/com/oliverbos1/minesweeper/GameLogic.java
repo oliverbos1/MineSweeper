@@ -108,12 +108,20 @@ public class GameLogic {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 GameBoard.FieldState existingField = gameBoard.getField(x, y);
-                gameBoard.setField(x, y, existingField
-                        .withIsOpen(true)
-                        .withAdjacentMineCount(gameBoard.checkAdjacentMines(x, y))
-                );
+                boolean mustOpenField = gameBoard.getGameBoardState() == GameBoardState.LOST || !hasFlagWithMine(x, y);
+
+                if (mustOpenField) {
+                    gameBoard.setField(x, y, existingField
+                            .withIsOpen(true)
+                            .withAdjacentMineCount(gameBoard.checkAdjacentMines(x, y))
+                    );
+                }
             }
         }
+    }
+
+    private boolean hasFlagWithMine(int x, int y) {
+        return gameBoard.getField(x, y).hasFlag() && gameBoard.getField(x, y).hasMine();
     }
 
     private void tileOpened(int x, int y) {
