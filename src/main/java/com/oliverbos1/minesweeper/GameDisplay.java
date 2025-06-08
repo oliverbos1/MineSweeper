@@ -44,9 +44,9 @@ public class GameDisplay implements EntityFactory {
 
         spawn("bannerBackground", 0, 0);
         spawn("remainingFlagCountBackground", 10, 10);
-        flagCountDigit0 = spawn("remainingFlagCountDigit0", 14, 14);
-        flagCountDigit1 = spawn("remainingFlagCountDigit1", 47, 14);
-        flagCountDigit2 = spawn("remainingFlagCountDigit2", 80, 14);
+        flagCountDigit0 = spawn("remainingFlagCountDigit", 14, 14);
+        flagCountDigit1 = spawn("remainingFlagCountDigit", 47, 14);
+        flagCountDigit2 = spawn("remainingFlagCountDigit", 80, 14);
         spawn("settingTileBackground", 460, 10);
         newGameTile = scaledSpawnSettingsTile("newGameTile", 464);
         spawn("settingTileBackground", 840, 10);
@@ -166,22 +166,8 @@ public class GameDisplay implements EntityFactory {
         return newGameTile;
     }
 
-    @Spawns("remainingFlagCountDigit0")
-    public Entity newRemainingFlagsCountDigit0(SpawnData data) {
-        return entityBuilder(data)
-                .view("remainingFlagCountNumber/countIdle.png")
-                .build();
-    }
-
-    @Spawns("remainingFlagCountDigit1")
-    public Entity newRemainingFlagsCountDigit1(SpawnData data) {
-        return entityBuilder(data)
-                .view("remainingFlagCountNumber/countIdle.png")
-                .build();
-    }
-
-    @Spawns("remainingFlagCountDigit2")
-    public Entity newRemainingFlagsCountDigit2(SpawnData data) {
+    @Spawns("remainingFlagCountDigit")
+    public Entity newRemainingFlagsCountDigit(SpawnData data) {
         return entityBuilder(data)
                 .view("remainingFlagCountNumber/countIdle.png")
                 .build();
@@ -295,9 +281,11 @@ public class GameDisplay implements EntityFactory {
         if (remainingFlagCount < 100 && gameBoard.getMineAmount() < 100) {
             remainingFlagCountImageDigit0 = "remainingFlagCountNumber/countIdle.png";
         } else remainingFlagCountImageDigit0 = STR."remainingFlagCountNumber/count\{digit0}.png";
+
         if (remainingFlagCount < 10 && gameBoard.getMineAmount() < 10) {
             remainingFlagCountImageDigit1 = "remainingFlagCountNumber/countIdle.png";
         } else remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
+
         String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}.png";
 
         setImage(flagCountDigit0, remainingFlagCountImageDigit0);
