@@ -93,9 +93,6 @@ public class GameLogic {
             if (gameBoard.checkLosingState().isPresent()) {
                 openBoard();
             }
-            if (gameBoard.checkWinningState()) {
-                openBoard();
-            }
             publishBoard(gameBoard);
         }
     }
@@ -121,6 +118,10 @@ public class GameLogic {
         GameBoard.FieldState existingField = gameBoard.getField(x, y);
         if (!existingField.isOpen()) {
             gameBoard.setField(x, y, existingField.withHasFlag(!existingField.hasFlag()));
+        }
+
+        if (gameBoard.checkWinningState()) {
+            openBoard();
         }
 
         publishBoard(gameBoard);
