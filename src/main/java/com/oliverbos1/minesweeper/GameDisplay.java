@@ -22,6 +22,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 @SuppressWarnings("preview")
 public class GameDisplay implements EntityFactory {
     private Entity[][] boardContent;
+    private Entity flagCountDigit0 = new Entity();
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
     private Entity newGameTile = new Entity();
@@ -43,8 +44,9 @@ public class GameDisplay implements EntityFactory {
 
         spawn("bannerBackground", 0, 0);
         spawn("remainingFlagCountBackground", 10, 10);
-        flagCountDigit1 = spawn("remainingFlagCountDigit1", 14, 14);
-        flagCountDigit2 = spawn("remainingFlagCountDigit2", 48, 14);
+        flagCountDigit0 = spawn("remainingFlagCountDigit0", 14, 14);
+        flagCountDigit1 = spawn("remainingFlagCountDigit1", 47, 14);
+        flagCountDigit2 = spawn("remainingFlagCountDigit2", 80, 14);
         spawn("settingTileBackground", 460, 10);
         newGameTile = scaledSpawnSettingsTile("newGameTile", 464);
         spawn("settingTileBackground", 840, 10);
@@ -164,17 +166,24 @@ public class GameDisplay implements EntityFactory {
         return newGameTile;
     }
 
+    @Spawns("remainingFlagCountDigit0")
+    public Entity newRemainingFlagsCountDigit0(SpawnData data) {
+        return entityBuilder(data)
+                .view("remainingFlagCountNumber/countIdle.png")
+                .build();
+    }
+
     @Spawns("remainingFlagCountDigit1")
     public Entity newRemainingFlagsCountDigit1(SpawnData data) {
         return entityBuilder(data)
-                .view("remainingFlagCountNumber/count0.png")
+                .view("remainingFlagCountNumber/countIdle.png")
                 .build();
     }
 
     @Spawns("remainingFlagCountDigit2")
     public Entity newRemainingFlagsCountDigit2(SpawnData data) {
         return entityBuilder(data)
-                .view("remainingFlagCountNumber/count0.png")
+                .view("remainingFlagCountNumber/countIdle.png")
                 .build();
     }
 
@@ -270,17 +279,28 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void updateRemainingFlagCount(GameBoard gameBoard) {
+        int digit0;
         int digit1;
         int digit2;
 
-        int remainingFlagCount = Math.max(0, Math.min(99, gameBoard.getMineAmount() - gameBoard.getFlagAmount()));
+        String remainingFlagCountImageDigit0;
+        String remainingFlagCountImageDigit1;
 
-        if (remainingFlagCount < 10) digit1 = 0;
-        else digit1 = remainingFlagCount / 10;
-        digit2 = remainingFlagCount % 10;
-        String remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
+        int remainingFlagCount = Math.max(0, Math.min(999, gameBoard.getMineAmount() - gameBoard.getFlagAmount()));
+
+        digit0 = remainingFlagCount / 100;
+        digit1 = remainingFlagCount % 100 / 10;
+        digit2 = remainingFlagCount % 100 % 10;
+
+        if (remainingFlagCount < 100 && gameBoard.getMineAmount() < 100) {
+            remainingFlagCountImageDigit0 = "remainingFlagCountNumber/countIdle.png";
+        } else remainingFlagCountImageDigit0 = STR."remainingFlagCountNumber/count\{digit0}.png";
+        if (remainingFlagCount < 10 && gameBoard.getMineAmount() < 10) {
+            remainingFlagCountImageDigit1 = "remainingFlagCountNumber/countIdle.png";
+        } else remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
         String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}.png";
 
+        setImage(flagCountDigit0, remainingFlagCountImageDigit0);
         setImage(flagCountDigit1, remainingFlagCountImageDigit1);
         setImage(flagCountDigit2, remainingFlagCountImageDigit2);
 
