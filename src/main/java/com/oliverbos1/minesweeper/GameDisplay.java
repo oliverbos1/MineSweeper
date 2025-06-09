@@ -22,6 +22,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 @SuppressWarnings("preview")
 public class GameDisplay implements EntityFactory {
     private Entity[][] boardContent;
+    private Entity[][] boardContentBackground;
     private Entity flagCountDigit0 = new Entity();
     private Entity flagCountDigit1 = new Entity();
     private Entity flagCountDigit2 = new Entity();
@@ -31,6 +32,8 @@ public class GameDisplay implements EntityFactory {
     private static final int tileWidthInPixels = 100;
     private static final int tileHeightInPixels = 100;
     private static final int headerTileHeight = 100;
+
+    private int currentNrTilesHorizontal;
 
     private int nrTilesHorizontal;
     private Difficulty difficulty;
@@ -69,7 +72,9 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void spawnGridTiles(MineSweeperSettings settings) {
+        boardContentBackground = new Entity[settings.nrTilesHorizontal()][settings.nrTilesHorizontal()];
         boardContent = new Entity[settings.nrTilesHorizontal()][settings.nrTilesHorizontal()];
+        currentNrTilesHorizontal = settings.nrTilesHorizontal();
 
         double scaleFactor = getAppWidth() / (double) (settings.nrTilesHorizontal() * tileWidthInPixels);
 
@@ -78,7 +83,7 @@ public class GameDisplay implements EntityFactory {
                 double xOffset = (double) (x * getAppWidth()) / settings.nrTilesHorizontal();
                 double yOffset =
                         y * ((double) (getAppHeight() - headerTileHeight) / settings.nrTilesHorizontal()) + 100;
-                scaledSpawnGridTile("tileBackground", xOffset, yOffset, scaleFactor);
+                boardContentBackground[x][y] = scaledSpawnGridTile("tileBackground", xOffset, yOffset, scaleFactor);
                 boardContent[x][y] = scaledSpawnGridTile("tile", xOffset, yOffset, scaleFactor);
                 boardContent[x][y].addComponent(new TileStateComponent(x, y));
             }
@@ -99,6 +104,15 @@ public class GameDisplay implements EntityFactory {
         tile.setScaleY(0.7);
         tile.setScaleOrigin(new Point2D(0, 0));
         return tile;
+    }
+
+    private void despawnGridTiles(int oldNrTilesHorizontal) {
+        for (int x = 0; x < oldNrTilesHorizontal; x++) {
+            for (int y = 0; y < oldNrTilesHorizontal; y++) {
+                boardContentBackground[x][y].removeFromWorld();
+                boardContent[x][y].removeFromWorld();
+            }
+        }
     }
 
     @Spawns("bannerBackground")
@@ -225,11 +239,12 @@ public class GameDisplay implements EntityFactory {
     }
 
     private void onNewGameTileClick() {
-        setImage(difficultyTile, STR."gameDifficultyTile\{difficulty}.png");
+        despawnGridTiles(currentNrTilesHorizontal);
         MineSweeperSettings newSettings = composeNewSettings();
         spawnGridTiles(newSettings);
         getEventBus().fireEvent(new GameEvents.NewGameEvent(newSettings));
         setImage(newGameTile, "newGameTile/newGameTileDefault.png");
+        setImage(difficultyTile, STR."gameDifficultyTile\{difficulty}.png");
     }
 
     private void onBoardUpdatedEvent(GameEvents.BoardUpdatedEvent boardUpdatedEvent) {
