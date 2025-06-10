@@ -201,7 +201,6 @@ public class GameDisplay implements EntityFactory {
 
     private void onTileClick(Entity tile, MouseButton button) {
         TileStateComponent tileState = tile.getComponent(TileStateComponent.class);
-        System.out.println(STR."tileClicked. x: \{tileState.x} y: \{tileState.y} button: \{button}");
 
         var moveType = switch (button) {
             case PRIMARY -> Optional.of(MoveType.TILE_OPENED);
@@ -314,9 +313,6 @@ public class GameDisplay implements EntityFactory {
         setImage(flagCountDigit0, remainingFlagCountImageDigit0);
         setImage(flagCountDigit1, remainingFlagCountImageDigit1);
         setImage(flagCountDigit2, remainingFlagCountImageDigit2);
-
-        System.out.println(STR."getMineAmount: \{gameBoard.getMineAmount()} getFlgAmount: \{gameBoard.getFlagAmount()}");
-        System.out.println(STR."Digit 1: \{digit1} Digit 2: \{digit2}");
     }
 
     private static void setImage(Entity entity, String image) {

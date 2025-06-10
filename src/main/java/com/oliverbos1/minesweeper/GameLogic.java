@@ -66,7 +66,6 @@ public class GameLogic {
     }
 
     private void onMoveEvent(GameEvents.MoveEvent e) {
-        System.out.println("onMoveEvent");
         if (!gameFinished()) {
             switch (e.moveType) {
                 case TILE_OPENED -> tileOpened(e.x, e.y);
