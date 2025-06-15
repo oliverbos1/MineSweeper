@@ -294,11 +294,17 @@ public class GameDisplay implements EntityFactory {
         String remainingFlagCountImageDigit0;
         String remainingFlagCountImageDigit1;
 
-        int remainingFlagCount = Math.max(0, Math.min(999, gameBoard.getMineAmount() - gameBoard.getFlagAmount()));
+        int remainingFlagCount = Math.max(-99, Math.min(999, gameBoard.getMineAmount() - gameBoard.getFlagAmount()));
 
-        digit0 = remainingFlagCount / 100;
-        digit1 = remainingFlagCount % 100 / 10;
-        digit2 = remainingFlagCount % 100 % 10;
+        if (remainingFlagCount < 0) {
+            digit0 = 0;
+            digit1 = remainingFlagCount % 100 / 10 * -1;
+            digit2 = remainingFlagCount % 100 % 10 * -1;
+        } else {
+            digit0 = remainingFlagCount / 100;
+            digit1 = remainingFlagCount % 100 / 10;
+            digit2 = remainingFlagCount % 100 % 10;
+        }
 
         if (remainingFlagCount < 100 && gameBoard.getMineAmount() < 100) {
             remainingFlagCountImageDigit0 = "remainingFlagCountNumber/countIdle.png";
@@ -308,6 +314,13 @@ public class GameDisplay implements EntityFactory {
             remainingFlagCountImageDigit1 = "remainingFlagCountNumber/countIdle.png";
         } else remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
 
+        if (remainingFlagCount < -9) {
+            remainingFlagCountImageDigit0 = "remainingFlagCountNumber/countMinus.png";
+        }
+
+        if (remainingFlagCount < 0 && remainingFlagCount > -10) {
+            remainingFlagCountImageDigit1 = "remainingFlagCountNumber/countMinus.png";
+        }
         String remainingFlagCountImageDigit2 = STR."remainingFlagCountNumber/count\{digit2}.png";
 
         setImage(flagCountDigit0, remainingFlagCountImageDigit0);
