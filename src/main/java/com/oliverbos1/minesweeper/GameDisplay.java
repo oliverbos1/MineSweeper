@@ -316,6 +316,7 @@ public class GameDisplay implements EntityFactory {
 
         if (remainingFlagCount < -9) {
             remainingFlagCountImageDigit0 = "remainingFlagCountNumber/countMinus.png";
+            remainingFlagCountImageDigit1 = STR."remainingFlagCountNumber/count\{digit1}.png";
         }
 
         if (remainingFlagCount < 0 && remainingFlagCount > -10) {
