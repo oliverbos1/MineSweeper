@@ -1,5 +1,3 @@
-<a id="readme-top"></a>
-
 <div>
 <h1 align="center">Mine Sweeper</h1>
 
@@ -18,19 +16,13 @@
 > 2. extract/unzip `mineSweeper.zip` to preferred location. recommended location `C:\Program Files`
 > 3. in the extracted folder go to `bin` and start `MineSweeperStart.bat`
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ### License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 #### Built using
 
 [![FXGL][FXGL.com]][FXGL-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 [FXGL-url]: https://almasb.github.io/FXGL/
 
