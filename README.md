@@ -20,6 +20,8 @@
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
+***
+
 #### Built using
 
 [![FXGL][FXGL.com]][FXGL-url]
