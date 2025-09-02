@@ -126,8 +126,8 @@ public class GameLogic {
     private void tileOpened(int x, int y) {
         if (!gameBoard.getField(x, y).hasFlag()) {
             tileOpenRecursion(x, y);
-            updateGameState();
 
+            updateGameState();
             openBoardOnGameFinished();
             publishBoard(gameBoard);
         }
