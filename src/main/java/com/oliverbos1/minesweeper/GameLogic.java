@@ -137,11 +137,12 @@ public class GameLogic {
         GameBoard.FieldState existingField = gameBoard.getField(x, y);
 
         if (!gameBoard.getField(x, y).isOpen()) {
+            int adjacentMineCount = gameBoard.checkAdjacentMines(x, y);
             gameBoard.setField(x, y, existingField
                     .withIsOpen(true)
-                    .withAdjacentMineCount(gameBoard.checkAdjacentMines(x, y))
+                    .withAdjacentMineCount(adjacentMineCount)
             );
-            if (gameBoard.checkAdjacentMines(x, y) == 0) {
+            if (adjacentMineCount == 0) {
                 for (GameBoard.Coordinates coordinate : gameBoard.adjacentTileCoordinates(x, y)) {
                     tileOpenRecursion(coordinate.x(), coordinate.y());
                 }
